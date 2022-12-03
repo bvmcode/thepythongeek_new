@@ -1,0 +1,11 @@
+boto3
+black
+flake8
+flask
+flask_caching
+flask-cors
+flask-restx
+isort
+psycopg2
+pytest
+redis

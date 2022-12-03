@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+    app:
+      build: .
+      restart: always
+      ports:
+        - "8000:5000"
+      volumes:
+          - ./client:/app
+      env_file:
+          - .env
+      depends_on:
+        - redis
+
+    redis:
+      image: redis
+      ports:
+        - "6379:6379"
+
+    # nginx:
+    #     build: ./nginx
+    #     container_name: nginx
+    #     restart: always
+    #     depends_on:
+    #         - app
+    #     volumes:
+    #         - ./client/app/static:/etc/nginx/app/project/static
+    #     ports:
+    #         - "8000:80"

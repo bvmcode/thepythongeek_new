@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block title_h1 %}{{ title }}{% endblock %}
+{% block title_img %}{{ title_img }}{% endblock %}
+
+{% block content %}
+
+
+<div class="container-fluid" id="home">
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8 mb-3 mt-3" id="home-body">
+            <p><span class="fs-1">H</span>ello, my name is Barry Martin. I live in south Jersey with my wonderful wife and two boys. I am a data and software 
+            nerd. I have many years of experience in the data analytics space from actual analysis for stakeholder decision making to data and software engineering.
+        </p>
+        </div>
+        <div class="col-2"></div>
+    </div>
+    <div class="d-flex flex-row bd-highlight justify-content-center mb-3 home-list">
+        <h4>Please visit any of my links below</h4>
+    </div>
+    <div class="d-flex flex-row bd-highlight justify-content-center mb-3 home-list">
+        <div class="p-2 bd-highlight home-icon"><a target="_blank" href="https://www.linkedin.com/in/martbar"><i class="fa-brands fa-linkedin"></i></a></div>
+        <div class="p-2 bd-highlight home-icon"><a target="_blank" href="https://www.github.com/bvmcode"><i class="fa-brands fa-github"></i></a></div>
+        <div class="p-2 bd-highlight home-icon"><a target="_blank" href="https://medium.com/@thepythongeek"><i class="fa-brands fa-medium"></i></a></div>
+        <div class="p-2 bd-highlight home-icon"><a target="_blank" href="https://twitter.com/wx_geek_dot_py"><i class="fa-brands fa-twitter"></i></a></div>
+    </div>
+</div>
+<br>
+<br>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block title_h1 %}{{ title }}{% endblock %}
+{% block title_img %}{{ title_img }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid" >
+    <div>
+        <h1>project</h1>
+    </div>
+    <img class="img-fluid" src="/static/images/proj_diagram.png" alt="">
+</div>
+
+
+<div id="app">
+    <label for="artists">Choose an artist:</label>
+    <select autocomplete="off" name="artists" id="artists" onchange="getData.call(this, event)">
+        <option value="Dream Theater">Dream Theater</option>
+        <option value="Vola">Vola</option>
+      </select>
+    <canvas id="myChart"></canvas>
+</div>
+
+
+<script>
+
+async function plot(artist){
+    let chartStatus = Chart.getChart("myChart"); // <canvas> id
+    if (chartStatus != undefined) {
+        chartStatus.destroy();
+    }
+    var url = "http://127.0.0.1:8000/project/api/artists/"+artist+"/weekly"
+    const response = await fetch(url);
+    var data = await response.json();
+    var spotify = [];
+    var twitter = [];
+    var dates = [];
+    for (key in data){
+        spotify.push(data[key]["spotify"])
+        twitter.push(data[key]["twitter"])
+        dates.push(key)
+    }
+    const config = {
+        type: 'line',
+        data:{
+            labels: dates,
+            datasets: [{
+                label: 'Spotify',
+                data: spotify,
+                yAxisID: 'spotify'
+            },
+            {
+                label: 'Twitter',
+                data: twitter,
+                yAxisID: 'twitter'
+            }]
+        },
+        options: {
+            scales: {
+                spotify: {
+                    position: 'left'
+                        }, 
+                twitter: {
+                    position: 'right'
+                        }
+                }
+            }
+        };
+ 
+        const myChart = new Chart("myChart", config)
+
+}
+
+window.addEventListener("load",function(){
+    plot("Dream Theater"); 
+},false);
+
+function getData(event){
+    event.preventDefault();
+    var artist = this.options[this.selectedIndex].text
+    plot(artist);
+}
+
+
+</script>
+
+{% endblock %}
+

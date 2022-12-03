@@ -1,0 +1,60 @@
+/* body */
+body {
+    font-family: 'Roboto';
+}
+
+/* navbar */
+nav {
+    background-color: #306998;
+}
+
+nav a {
+    font-family: 'Chakra Petch';
+    font-size: 120%;
+    color: black !important;
+}
+
+#nav-title {
+    font-family: 'Orbitron';
+    font-size: 150%;
+    color: #ffe873 !important;
+}
+
+#nav-social-media {
+    font-size: 125%;
+}
+
+/* home */
+
+#home-header {
+    background-size: 100% 100%;;
+    background-image: url("/static/images/home_background.jpg");
+}
+
+#home-header h1{
+    font-family: 'Orbitron';
+    font-size: 200%;
+    color: #ffe873 !important;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+#home-img img:hover {
+    filter: grayscale(1);
+}
+
+.home-icon {
+    font-size: 300%;
+    color: #306998;
+    margin-right:1%;
+}
+
+
+/* resume */
+
+
+.resume-section-header{
+    background-color: #306998;
+    color: white;
+}
+
