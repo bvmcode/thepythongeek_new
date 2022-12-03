@@ -30,7 +30,7 @@ async function plot(artist){
     if (chartStatus != undefined) {
         chartStatus.destroy();
     }
-    var url = "http://127.0.0.1:8000/project/api/artists/"+artist+"/weekly"
+    var url = "{{ url_for('project.artist_api', artist='ARTIST') }}".replace("ARTIST", artist)
     const response = await fetch(url);
     var data = await response.json();
     var spotify = [];

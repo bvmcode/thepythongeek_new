@@ -13,6 +13,4 @@ WORKDIR /app
 
 RUN python3 -m pip install -r requirements.txt
 
-CMD ["flask", "run", "-h", "0.0.0.0"]
-
-#CMD ["uwsgi", "app.ini"]
+CMD ["uwsgi", "app.ini"]

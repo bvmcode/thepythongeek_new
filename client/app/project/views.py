@@ -25,8 +25,7 @@ def get_data(date):
 
 @project_bp.route("/")
 def project():
-    data = get_data('20221126')
-    return render_template("project.html", title="\\\\sample_project\\\\", title_img="project.jpg", data=data)
+    return render_template("project.html", title="\\\\sample_project\\\\", title_img="project.jpg")
 
 
 @api.route('/api/artists/<artist>/weekly')

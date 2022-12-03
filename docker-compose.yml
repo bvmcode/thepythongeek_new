@@ -5,27 +5,40 @@ services:
     app:
       build: .
       restart: always
-      ports:
-        - "8000:5000"
       volumes:
           - ./client:/app
+      environment:
+          FLASK_APP: ./app/__init__.py
+          APP_SETTINGS: app.config.BaseConfig
+          FLASK_ENV: production
+          CACHE_TYPE: redis
+          CACHE_REDIS_HOST: redis
+          CACHE_REDIS_PORT: 6379
+          CACHE_REDIS_DB: 0
+          CACHE_REDIS_URL: redis://redis:6379/0
+          CACHE_DEFAULT_TIMEOUT: 500
       env_file:
           - .env
       depends_on:
         - redis
+      expose:
+        - 8080
 
     redis:
       image: redis
       ports:
         - "6379:6379"
 
-    # nginx:
-    #     build: ./nginx
-    #     container_name: nginx
-    #     restart: always
-    #     depends_on:
-    #         - app
-    #     volumes:
-    #         - ./client/app/static:/etc/nginx/app/project/static
-    #     ports:
-    #         - "8000:80"
+    nginx:
+      build: ./nginx
+      container_name: nginx
+      restart: always
+      depends_on:
+        - app
+      volumes:
+        - ./client/app/static:/etc/nginx/app/project/static
+        - ./nginx/ssl/pkey.key:/etc/nginx/pkey.key
+        - ./nginx/ssl/pkey.pem:/etc/nginx/pkey.pem
+      ports:
+        - "80:80"
+        - "443:443"

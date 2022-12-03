@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+
+    app:
+      build:
+        context: .
+        dockerfile: Dockerfile.dev
+      restart: always
+      volumes:
+          - ./client:/app
+      environment:
+          FLASK_APP: app.py
+          APP_SETTINGS: app.config.BaseConfig
+          FLASK_ENV: development
+          FLASK_DEBUG: "True"
+          CACHE_TYPE: redis
+          CACHE_REDIS_HOST: redis
+          CACHE_REDIS_PORT: 6379
+          CACHE_REDIS_DB: 0
+          CACHE_REDIS_URL: redis://redis:6379/0
+          CACHE_DEFAULT_TIMEOUT: 500
+      env_file:
+          - .env
+      ports:
+        - "8080:5000"
+      depends_on:
+        - redis
+
+    redis:
+      image: redis
+      ports:
+        - "6379:6379"

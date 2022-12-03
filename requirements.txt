@@ -9,3 +9,4 @@ isort
 psycopg2
 pytest
 redis
+uwsgi
