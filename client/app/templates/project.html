@@ -5,11 +5,34 @@
 {% block title_img %}{{ title_img }}{% endblock %}
 
 {% block content %}
-<div class="container-fluid" >
-    <div>
-        <h1>project</h1>
-    </div>
-    <img class="img-fluid" src="/static/images/proj_diagram.png" alt="">
+<div class="container" >
+    
+    <h1 class="mb-4">Show me the numbers!</h1>
+
+    <h3 class="mb-2">Introduction</h3>
+    <p>
+        I decided to create a simple project that would marry my love for music and my addiction to Twitter and Spotify. So let us
+        imagine that we work for a record company. A particular team in this company is really interested in 10 artists. They would 
+        love to know the weekly trend of followers on both Spotify and Twitter. This would help inform their social media or
+        marketing decisions. So they reached out to the analytics and engineering team to come up with an automated routine that would update 
+        these figures on a nightly basis and provide a chart and update chart.
+    </p>
+
+    <p>
+        So to tackle this I decided to use some AWS resources and this very web site. I figured I could keep this super light weight (no need for Airflow or a database here). 
+        below is the design I went for. The code for this project is located <a href="https://github.com/bvmcode/thepythongeek_new/tree/master/follower_stats">here</a>.
+        <img class="img-fluid" style="max-width:100%; margin: auto;" src="/static/images/proj_diagram.png" alt="">
+    </p>
+    <br>
+    <h3 class="mb-2">Spotify and Twitter API</h3>
+    <p> After getting access to both the Twitter and Spotify REST API's I created a script that basically does the following.</p>
+    <ul>
+        <li>From the Spotify REST API Get the Spotify artist object</li>
+        <li>From this object extract the number of Spotify followers</li>
+        <li>Also from this artist object extract the Twitter ID</li>
+        <li>From the number of Twitter followers by using the Twitter ID against the Twitter REST API.</li>
+    </ul>
+    
 </div>
 
 
@@ -18,6 +41,14 @@
     <select autocomplete="off" name="artists" id="artists" onchange="getData.call(this, event)">
         <option value="Dream Theater">Dream Theater</option>
         <option value="Vola">Vola</option>
+        <option value="Queensryche">Queensryche</option>
+        <option value="Katatonia">Katatonia</option>
+        <option value="Saint Asonia">Saint Asonia</option>
+        <option value="Josh Garrels">Josh Garrels</option>
+        <option value="Gunship">Gunship</option>
+        <option value="Helloween">Helloween</option>
+        <option value="Light The Torch">Light The Torch</option>
+        <option value="Rend Collective">Rend Collective</option>
       </select>
     <canvas id="myChart"></canvas>
 </div>
