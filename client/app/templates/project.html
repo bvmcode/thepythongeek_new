@@ -36,7 +36,7 @@
         <li>Also from this artist object extract the Twitter ID</li>
         <li>Get the number of Twitter followers by using the Twitter ID against the Twitter REST API</li>
     </ul>
-    <p>Then once all the data is captured, a json object is constructed. The json object looks like: </p>
+    <p>Then once all the data is captured, a json object is constructed that represents the data for the current date. The json object looks like: </p>
     <script src="https://gist.github.com/bvmcode/66a4ac8b632317725c1331bd9f011dfe.js"></script>
    <p>This encapsulates the core logic. As we will see in the next section, this will be wrapped into an AWS Lambda function so 
        that we can have a lightweight and modern way of accessing the needed data on a desired cadence.
@@ -52,9 +52,9 @@
 
     In other words, it does the following:
     <ul>
-        <li>Create a zip file with the Lambda function and dependencies</li>
+        <li>Create a zip file with the Lambda function python file and the site-packages dependencies</li>
         <li>Create AWS role to attach to the Lambda function in AWS so that we have write permissions to S3</li>
-        <li>Create AWS Lambda function by with the zip file and attach the AWS role</li>
+        <li>Create AWS Lambda function using the zip file and attach the AWS role</li>
         <li>Create an AWS Cloudwatch event to trigger the Lambda function daily</li>
     </ul>
 
@@ -65,7 +65,7 @@
 <br>
 <h3 class="mb-2">Application</h3>
 <p>Now that we have data available in S3 we can use our <a href="https://flask.palletsprojects.com/en/2.2.x/">Flask</a> web application to display the data. The goal here is 
-    to just present a plot weekly data (last 7 days). I made this real simple by creating a little REST API and utilized <a href="https://redis.io/">Redis</a> to 
+    to just present a plot that displays follower count data for the last 7 days. I made this real simple by creating a little REST API and utilized <a href="https://redis.io/">Redis</a> to 
     cache the data so that repeated access to the data is fast. I utilized the <a href="https://flask-restx.readthedocs.io/en/latest/">restx</a>
     library to create this endpoint.
 
@@ -94,7 +94,7 @@
     <br>
     <h3 class="mb-2">Data</h3>
 
-    <p>Finally the team can view their data!</p>
+    <p>Finally the team can view their data, which will auto-update nightly!</p>
 
     <div id="app">
         <label for="artists">Choose an artist:</label>
