@@ -1,8 +1,7 @@
 
-name: Manual workflow
+name: Build Status
 
-on:
-  workflow_dispatch:
+on: [push]
 
 
 jobs:
