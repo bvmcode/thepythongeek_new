@@ -10,10 +10,9 @@ def test_resume_view(client):
 
 def test_project_view(client):
     response = client.get("/project/")
-    assert response.status_code == 200
+    assert response.status_code == 201
 
 
 def test_404_view(client):
     response = client.get("/blah/")
     assert response.status_code == 404
-    
