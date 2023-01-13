@@ -1,8 +1,10 @@
+import os
+
 from flask import Flask, render_template
 from flask_caching import Cache
 from flask_cors import CORS
 from redis import Redis
-import os
+
 redis = Redis(host="redis", port=6379)
 cache = Cache()
 
