@@ -22,3 +22,7 @@ jobs:
             pip check
       - name: Tests
         run: pytest
+      - name: Linting
+        run: |
+            flake8
+            isort -c --diff
