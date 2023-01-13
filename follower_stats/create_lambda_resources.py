@@ -64,43 +64,40 @@ def create_s3_put_policy():
                 "Sid": "VisualEditor0",
                 "Effect": "Allow",
                 "Action": "s3:PutObject",
-                "Resource": "*"
+                "Resource": "*",
             }
-        ]
-        }
+        ],
+    }
     response = iam_client.create_policy(
         PolicyName=S3_PUT_POLICY_NAME,
         PolicyDocument=json.dumps(policy_json),
     )
-    return response['Policy']['Arn']
+    return response["Policy"]["Arn"]
 
 
 def create_lambda_role():
     """Create role with S3 write permissions."""
     s3_put_policy_arn = create_s3_put_policy()
     trust_relationship = {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "Service": "lambda.amazonaws.com"
-            },
-            "Action": "sts:AssumeRole"
-        }
-    ]
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {"Service": "lambda.amazonaws.com"},
+                "Action": "sts:AssumeRole",
+            }
+        ],
     }
     iam_client.create_role(
         RoleName=LAMBDA_ROLE_NAME,
-        AssumeRolePolicyDocument=json.dumps(trust_relationship)
+        AssumeRolePolicyDocument=json.dumps(trust_relationship),
     )
     iam_client.attach_role_policy(
-        PolicyArn=s3_put_policy_arn,
-        RoleName=LAMBDA_ROLE_NAME
+        PolicyArn=s3_put_policy_arn, RoleName=LAMBDA_ROLE_NAME
     )
     iam_client.attach_role_policy(
-        PolicyArn='arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole',
-        RoleName=LAMBDA_ROLE_NAME
+        PolicyArn="arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+        RoleName=LAMBDA_ROLE_NAME,
     )
     return iam_client.get_role(RoleName=LAMBDA_ROLE_NAME)
 

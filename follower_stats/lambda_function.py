@@ -1,10 +1,10 @@
 import json
 import os
 import re
-import requests
 from datetime import datetime
 
 import boto3
+import requests
 import tweepy
 
 SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
