@@ -54,9 +54,8 @@ def get_twitter_id_from_spotify(url):
 
 
 def get_spotify_artist(name):
-    url = (
-        f"https://api.spotify.com/v1/search?q={name}&type=artist&include_external=audio"
-    )
+    url = f"https://api.spotify.com/v1/search?q={name}"\
+           "&type=artist&include_external=audio"
     headers = get_spotify_headers()
     response = requests.get(url, headers=headers)
     data = response.json()
