@@ -25,4 +25,5 @@ jobs:
       - name: Linting
         run: |
             flake8 --max-line-length=100
-            isort -c --diff
+            isort ./client -c --diff
+            isort ./follower_stats -c --diff
