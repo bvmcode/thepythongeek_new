@@ -31,11 +31,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: deploy code
-      uses: appleboy/ssh-action@v0.1.2
+      uses: appleboy/ssh-action@v0.1.4
       with:
-        host: ${{ secrets.IP }}
+        host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
-        password: ${{ secrets.PWD }}
+        password: ${{ secrets.PASSWORD }}
         script: whoami
         # script: |
         #   cd thepythongeek_new
