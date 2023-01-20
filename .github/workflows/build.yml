@@ -4,7 +4,7 @@ name: Lint Test and Deploy
 on: [push]
 
 jobs:
-  test_and_lint:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -29,6 +29,7 @@ jobs:
       uses: appleboy/ssh-action@master
   deploy:
     runs-on: ubuntu-latest
+    steps:
       with:
         host: ${{ secrets.IP }}
         username: ${{ secrets.USER }}
