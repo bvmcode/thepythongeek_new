@@ -31,9 +31,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: deploy code
-      uses: appleboy/ssh-action@v0.1.6
+      uses: appleboy/ssh-action@v0.1.2
       with:
-        host: 192.241.142.192
+        host: ${{ secrets.IP }}
         username: ${{ secrets.USER }}
         password: ${{ secrets.PWD }}
         script: whoami
