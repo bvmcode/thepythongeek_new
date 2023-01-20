@@ -30,14 +30,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: deploy code
-      uses: appleboy/ssh-action@v0.1.6
+    - name: deploy
+      uses: fifsky/ssh-action@master
       with:
+        command: |
+          whoami
+          ls
         host: ${{ secrets.IP }}
-        username: ${{ secrets.USER }}
-        password: ${{ secrets.PWD }}
-        timeout: 120s
-        script: whoami
+        user: ${{ secrets.USER }}
+        pass: ${{ secrets.PWD}}
         # script: |
         #   cd thepythongeek_new
         #   git pull
