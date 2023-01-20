@@ -30,16 +30,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: deploy code
-      uses: appleboy/ssh-action@master
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.IP }}
         username: ${{ secrets.USER }}
         password: ${{ secrets.PWD }}
         port: ${{ secrets.PORT }}
-        script: |
-          cd thepythongeek_new
-          git pull
-          docker-compose down
-          docker-compose up
-
+        script: whoami
+        # script: |
+        #   cd thepythongeek_new
+        #   git pull
+        #   docker-compose down
+        #   docker-compose up
