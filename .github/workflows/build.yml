@@ -27,19 +27,19 @@ jobs:
             flake8 --max-line-length=100
             isort ./client -c --diff
             isort ./follower_stats -c --diff
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: deploy code
-  #     uses: appleboy/ssh-action@master
-  #     with:
-  #       host: ${{ secrets.IP }}
-  #       username: ${{ secrets.USER }}
-  #       password: ${{ secrets.PWD }}
-  #       port: ${{ secrets.PORT }}
-  #       script: |
-  #         cd thepythongeek_new
-  #         git pull
-  #         docker-compose down
-  #         docker-compose up
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: deploy code
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.IP }}
+        username: ${{ secrets.USER }}
+        password: ${{ secrets.PWD }}
+        port: ${{ secrets.PORT }}
+        script: |
+          cd thepythongeek_new
+          git pull
+          docker-compose down
+          docker-compose up
 
