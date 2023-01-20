@@ -37,7 +37,7 @@ jobs:
         username: ${{ secrets.USER }}
         password: ${{ secrets.PASSWORD }}
         script: whoami
-        command_timeout: 200m
+        command_timeout: 2000m
         # script: |
         #   cd thepythongeek_new
         #   git pull
