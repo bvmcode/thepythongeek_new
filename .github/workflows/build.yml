@@ -30,6 +30,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+    - name: deploy code
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.IP }}
         username: ${{ secrets.USER }}
