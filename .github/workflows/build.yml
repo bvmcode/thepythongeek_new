@@ -30,10 +30,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: deploy code
-      uses: appleboy/ssh-action@v0.1.6
     - name: foo
       run: echo ${{ secrets.USER }}@${{ secrets.IP }}
+    - name: deploy code
+      uses: appleboy/ssh-action@v0.1.6
       with:
         host: ${{ secrets.IP }}
         username: ${{ secrets.USER }}
