@@ -28,7 +28,7 @@ jobs:
             isort ./client -c --diff
             isort ./follower_stats -c --diff
       - name: ping
-        run: ping 192.241.142.192
+        run: ping 192.241.142.192 -n 1
   # deploy:
   #   runs-on: ubuntu-latest
   #   steps:
