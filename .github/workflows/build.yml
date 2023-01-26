@@ -38,7 +38,7 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: 22
         command_timeout: 200m
-        script: whoami
+        script: ls
         # script: |
         #   cd thepythongeek_new
         #   git pull
