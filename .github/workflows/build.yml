@@ -30,17 +30,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: deploy code
-      uses: appleboy/ssh-action@master
+    - name: Load private SSH key
+      uses: webfactory/ssh-agent@v0.5.3
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USER }}
-        key: ${{ secrets.KEY }}
-        port: 22
-        command_timeout: 200m
-        script: ls
-        # script: |
-        #   cd thepythongeek_new
-        #   git pull
-        #   docker-compose down
-        #   docker-compose up
+        ssh-private-key: ${{ secrets.KEY }}
+
+    - name: Atomic Deploy
+      run: |
+        ssh ${{ secrets.USER }}@${{ secrets.HOST }} << EOF
+          whoami
+        EOF
