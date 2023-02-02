@@ -32,8 +32,9 @@ def project():
 class ArtistApi(Resource):
     @cache.cached(timeout=1000, query_string=True)
     def get(self, artist):
-        start = datetime.now() + timedelta(days=-7)
-        end = datetime.now()
+        # hard code due to twitter API now chargin
+        start = datetime(2023, 1, 1)
+        end = datetime(2023, 1, 7)
         data = {}
         while start <= end:
             date = start.strftime("%Y%m%d")
