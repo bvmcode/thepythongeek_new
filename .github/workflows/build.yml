@@ -31,16 +31,16 @@ jobs:
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
-          key: ${{ secrets.KEY }}
+          key: ${{ secrets.SSH_KEY }}
           known_hosts: unnecessary
       - name: Adding Known Hosts
-        run: ssh-keyscan -H 192.241.142.192 >> ~/.ssh/known_hosts
+        run: ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
       - name: Deploy application
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username:  ${{ secrets.USER }}
-          key: ${{ secrets.KEY }}
+          key: ${{ secrets.SSH_KEY }}
           script: ls
   # deploy:
   #   runs-on: ubuntu-latest
