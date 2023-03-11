@@ -29,10 +29,10 @@ jobs:
       #       isort ./follower_stats -c --diff
 
       - name: Deploy application
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.HOST }}
-          username:  ${{ secrets.USER }}
+          host: 192.168.208.1
+          username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
           script: ls
   # deploy:
