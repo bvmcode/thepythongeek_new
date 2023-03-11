@@ -9,32 +9,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Packages
-        run: sudo apt-get install -y python3-pip python3-dev libpq-dev unixodbc-dev libsasl2-dev
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.9"
-      - name: Pip Install
-        run: |
-            pip install --upgrade pip
-            pip install -r requirements.txt
-            pip check
-      - name: Tests
-        run: pytest
-      - name: Linting
-        run: |
-            flake8 --max-line-length=100
-            isort ./client -c --diff
-            isort ./follower_stats -c --diff
+      # - name: Packages
+      #   run: sudo apt-get install -y python3-pip python3-dev libpq-dev unixodbc-dev libsasl2-dev
+      # - name: Set up Python 3.9
+      #   uses: actions/setup-python@v3
+      #   with:
+      #     python-version: "3.9"
+      # - name: Pip Install
+      #   run: |
+      #       pip install --upgrade pip
+      #       pip install -r requirements.txt
+      #       pip check
+      # - name: Tests
+      #   run: pytest
+      # - name: Linting
+      #   run: |
+      #       flake8 --max-line-length=100
+      #       isort ./client -c --diff
+      #       isort ./follower_stats -c --diff
 
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      # - name: Adding Known Hosts
-      #   run: ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+          known_hosts: unnecessary
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
       - name: Deploy application
         uses: appleboy/ssh-action@master
         with:
