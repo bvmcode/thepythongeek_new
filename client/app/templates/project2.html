@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block title_h1 %}{{ title }}{% endblock %}
+{% block title_img %}{{ title_img }}{% endblock %}
+
+{% block content %}
+<div class="container" >
+    
+    <h1 class="mb-4">Data that Rocks!</h1>
+
+    <h3 class="mb-2">Introduction</h3>
+    <p>
+        I decided to create a simple project that would marry my love for music and my addiction to Twitter and Spotify. So let us
+        imagine that we work for a record company. A particular team in this company is really interested in 10 artists. They would 
+        love to know the weekly trend of followers on both Spotify and Twitter. This would help inform their social media or
+        marketing decisions. So they reached out to the analytics and engineering team to come up with an automated routine that would update 
+        these figures on a nightly basis and provide a chart and update chart.
+    </p>
+
+    <p>
+        So to tackle this I decided to use some AWS resources and this very web site. I figured I could keep this super light weight (no need for Airflow or a database here). 
+        below is the design I went for. The code for this project is located <a href="https://github.com/bvmcode/thepythongeek_new/tree/master/follower_stats">here</a>.
+        <img class="img-fluid" style="max-width:100%; margin: auto;" src="/static/images/proj_diagram.png" alt="">
+    </p>
+
+
+    <br>
+    <h3 class="mb-2">Spotify and Twitter API</h3>
+    <p> The first step was to create a python script that follows the basic logic below for each artist. Note that basic requests library was used 
+        for getting Spotify data and <a href="https://www.tweepy.org/">tweepy</a> was used for accessing Twitter data.
+    </p>
+    <ul>
+        <li>Get the Spotify artist object from the Spotify REST API</li>
+        <li>From this object extract the number of Spotify followers</li>
+        <li>Also from this artist object extract the Twitter ID</li>
+        <li>Get the number of Twitter followers by using the Twitter ID against the Twitter REST API</li>
+    </ul>
+    <p>Then once all the data is captured, a json object is constructed that represents the data for the current date. The json object looks like: </p>
+    <script src="https://gist.github.com/bvmcode/66a4ac8b632317725c1331bd9f011dfe.js"></script>
+   <p>This encapsulates the core logic. As we will see in the next section, this will be wrapped into an AWS Lambda function so 
+       that we can have a lightweight and modern way of accessing the needed data on a desired cadence.
+   </p>
+
+   <br>
+   <h3 class="mb-2">AWS Resources</h3>
+   <p>The logic from the previous section is encapsulated in the AWS Lambda function <a href="https://github.com/bvmcode/thepythongeek_new/blob/master/follower_stats/lambda_function.py">lambda_function.py</a>. 
+    Additionally, the script <a href="https://github.com/bvmcode/thepythongeek_new/blob/master/follower_stats/create_lambda_resources.py">create_lambda_resources.py</a> is summarized well by it's 
+    <i>main</i> function.
+
+    <script src="https://gist.github.com/bvmcode/36520c68cc1f7e9f48ca1d2b16446f0a.js"></script>
+
+    In other words, it does the following:
+    <ul>
+        <li>Create a zip file with the Lambda function python file and the site-packages dependencies</li>
+        <li>Create AWS role to attach to the Lambda function in AWS so that we have write permissions to S3</li>
+        <li>Create AWS Lambda function using the zip file and attach the AWS role</li>
+        <li>Create an AWS Cloudwatch event to trigger the Lambda function daily</li>
+    </ul>
+
+    After running this script we have a Lambda function that is triggered daily by Cloudwatch in which json is delivered to our specicied S3 bucket.
+</p>
+
+
+<br>
+<h3 class="mb-2">Application</h3>
+<p>Now that we have data available in S3 we can use our <a href="https://flask.palletsprojects.com/en/2.2.x/">Flask</a> web application to display the data. The goal here is 
+    to just present a plot that displays follower count data for the last 7 days. I made this real simple by creating a little REST API and utilized <a href="https://redis.io/">Redis</a> to 
+    cache the data so that repeated access to the data is fast. I utilized the <a href="https://flask-restx.readthedocs.io/en/latest/">restx</a>
+    library to create this endpoint.
+
+    <script src="https://gist.github.com/bvmcode/98497e0458ef8a7e7d524da6eb725a0a.js"></script>
+
+    <br>
+    What this endpoint does is take in an artist name, fetches the last 7 days worth of data and reformats the data so that the keys are dates and the values
+    are nested json of Spotify and Twitter follower values that looks like:
+    <br>
+
+    <script src="https://gist.github.com/bvmcode/4177de25d4e760ebafe3efb5b302cb71.js"></script>
+   
+    <br>
+    And then we end up with is nicely formatted data that we can use to chart each artist's 7 day trend. Below shows both the HTML setup 
+    (dropdown menu and available plot cavas) as well as the javascript that handles the plotting. 
+    I used the <a href="https://www.chartjs.org/">chart.js</a> library here. We see here that the page loads by default with "Dream Theater" being
+     selected and plotted. Based on the drop down selection the <i>getData</i> function is 
+    called which then calls the <i>plot</i> function with artist as an argument. Data is fetched from the Flask API. The data is consumed and 
+    reformatted so that two line plots (one Twitter and one Spotify) can be overlayed.
+    
+    <br>
+    <script src="https://gist.github.com/bvmcode/4ae1c759ca25256ffc5ce02b2b204b56.js"></script>
+
+</p>
+
+    <br>
+    <h3 class="mb-2">Data</h3>
+
+    <p>Finally the team can view their data, which will auto-update nightly and provide the last 7 day trend!</p>
+    <p>***Note - now that Twitter will be charging for access to their API, this project was brought down. Below is data for 1/1/2023-1/7/2023 read from AWS S3.</p>
+
+    <div id="app">
+        <label for="artists">Choose an artist:</label>
+        <select autocomplete="off" name="artists" id="artists" onchange="getData.call(this, event)">
+            <option value="Dream Theater">Dream Theater</option>
+            <option value="Vola">Vola</option>
+            <option value="Queensryche">Queensryche</option>
+            <option value="Katatonia">Katatonia</option>
+            <option value="Saint Asonia">Saint Asonia</option>
+            <option value="Josh Garrels">Josh Garrels</option>
+            <option value="Gunship">Gunship</option>
+            <option value="Helloween">Helloween</option>
+            <option value="Light The Torch">Light The Torch</option>
+            <option value="Rend Collective">Rend Collective</option>
+          </select>
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
+
+<br>
+<br>
+
+
+
+
+
+<script>
+
+async function plot(artist){
+    let chartStatus = Chart.getChart("myChart"); // <canvas> id
+    if (chartStatus != undefined) {
+        chartStatus.destroy();
+    }
+    var url = "{{ url_for('project.artist_api', artist='ARTIST') }}".replace("ARTIST", artist)
+    const response = await fetch(url);
+    var data = await response.json();
+    var spotify = [];
+    var twitter = [];
+    var dates = [];
+    for (key in data){
+        spotify.push(data[key]["spotify"])
+        twitter.push(data[key]["twitter"])
+        dates.push(key)
+    }
+    const config = {
+        type: 'line',
+        data:{
+            labels: dates,
+            datasets: [{
+                label: 'Spotify',
+                data: spotify,
+                yAxisID: 'spotify'
+            },
+            {
+                label: 'Twitter',
+                data: twitter,
+                yAxisID: 'twitter'
+            }]
+        },
+        options: {
+            scales: {
+                spotify: {
+                    position: 'left'
+                        }, 
+                twitter: {
+                    position: 'right'
+                        }
+                }
+            }
+        };
+ 
+        const myChart = new Chart("myChart", config)
+
+}
+
+window.addEventListener("load",function(){
+    plot("Dream Theater"); 
+},false);
+
+function getData(event){
+    event.preventDefault();
+    var artist = this.options[this.selectedIndex].text
+    plot(artist);
+}
+
+</script>
+
+{% endblock %}
+

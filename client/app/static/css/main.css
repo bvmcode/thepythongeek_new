@@ -58,3 +58,14 @@ nav a {
     color: white;
 }
 
+#proj-file{
+    background-color: #ffe873;
+    font-style: italic;
+    opacity: .6;
+}
+
+#proj-cmd{
+    background-color: lightblue;
+    font-style: italic;
+    opacity: .6;
+}

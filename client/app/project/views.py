@@ -24,7 +24,13 @@ def get_data(date):
 @project_bp.route("/")
 def project():
     return render_template(
-        "project.html", title="\\\\sample_project\\\\", title_img="project.jpg"
+        "project.html", title="\\\\sample_project\\\\", title_img="project.png"
+    )
+
+@project_bp.route("/music")
+def project2():
+    return render_template(
+        "project2.html", title="\\\\sample_project\\\\", title_img="project2.jpg"
     )
 
 

@@ -7,181 +7,259 @@
 {% block content %}
 <div class="container" >
     
-    <h1 class="mb-4">Show Me the Data!</h1>
+    <h1 class="mb-4">AI Sentiment Analysis Pipeline using Airflow and AWS RDS</h1>
 
     <h3 class="mb-2">Introduction</h3>
     <p>
-        I decided to create a simple project that would marry my love for music and my addiction to Twitter and Spotify. So let us
-        imagine that we work for a record company. A particular team in this company is really interested in 10 artists. They would 
-        love to know the weekly trend of followers on both Spotify and Twitter. This would help inform their social media or
-        marketing decisions. So they reached out to the analytics and engineering team to come up with an automated routine that would update 
-        these figures on a nightly basis and provide a chart and update chart.
+        Machine learning is the foundation of AI where a machine can learn from data we want it trained on and 
+        it can do so without explicitly being programmed. 
+        Natural language processing (NLP) is branch of machine learning 
+        where machines can learn to understand human text. Sentiment analysis is a branch of NLP that makes use of an algorithm or model to measure 
+        positive or negative tone of text. For example, "the apple was rotten and had an awful taste" would have a negative sentiment. 
+        The use cases of sentiment analysis are endless but one common use case would be a business that wants to understand customer 
+        feedback on social media.
+
     </p>
 
     <p>
-        So to tackle this I decided to use some AWS resources and this very web site. I figured I could keep this super light weight (no need for Airflow or a database here). 
-        below is the design I went for. The code for this project is located <a href="https://github.com/bvmcode/thepythongeek_new/tree/master/follower_stats">here</a>.
-        <img class="img-fluid" style="max-width:100%; margin: auto;" src="/static/images/proj_diagram.png" alt="">
+        The goal of this project is to build a data store of news headlines by using the <a href="https://www.newsapi.org">News API</a> REST API
+        and then perform sentiment analyis on the headlines. For the second part we can
+        utilize the <a href="https://www.openai.com">openai</a> REST API and take advantage of AI that is already built. 
+        Imagine we are researchers wanted to understand the world of clickbait articles and media bias. 
+        Understanding the keywords of headlines, the sentiment of headlines, and which news sources are publishing these headlines 
+        are critical data points. In our case we are going to make use of a preexisting AI model to get sentiment data, 
+        rather than training our own model to do so. We can make use of openai's <a href="https://platform.openai.com/docs/models/gpt-3-5">text-davinci-003 model</a>,
+        which is a GPT-3 model, and we can utilize the openai <a href="https://platform.openai.com/docs/api-reference/completions">Completion</a> REST API to prompt the model and get results.
     </p>
-
-
-    <br>
-    <h3 class="mb-2">Spotify and Twitter API</h3>
-    <p> The first step was to create a python script that follows the basic logic below for each artist. Note that basic requests library was used 
-        for getting Spotify data and <a href="https://www.tweepy.org/">tweepy</a> was used for accessing Twitter data.
-    </p>
-    <ul>
-        <li>Get the Spotify artist object from the Spotify REST API</li>
-        <li>From this object extract the number of Spotify followers</li>
-        <li>Also from this artist object extract the Twitter ID</li>
-        <li>Get the number of Twitter followers by using the Twitter ID against the Twitter REST API</li>
-    </ul>
-    <p>Then once all the data is captured, a json object is constructed that represents the data for the current date. The json object looks like: </p>
-    <script src="https://gist.github.com/bvmcode/66a4ac8b632317725c1331bd9f011dfe.js"></script>
-   <p>This encapsulates the core logic. As we will see in the next section, this will be wrapped into an AWS Lambda function so 
-       that we can have a lightweight and modern way of accessing the needed data on a desired cadence.
-   </p>
-
-   <br>
-   <h3 class="mb-2">AWS Resources</h3>
-   <p>The logic from the previous section is encapsulated in the AWS Lambda function <a href="https://github.com/bvmcode/thepythongeek_new/blob/master/follower_stats/lambda_function.py">lambda_function.py</a>. 
-    Additionally, the script <a href="https://github.com/bvmcode/thepythongeek_new/blob/master/follower_stats/create_lambda_resources.py">create_lambda_resources.py</a> is summarized well by it's 
-    <i>main</i> function.
-
-    <script src="https://gist.github.com/bvmcode/36520c68cc1f7e9f48ca1d2b16446f0a.js"></script>
-
-    In other words, it does the following:
-    <ul>
-        <li>Create a zip file with the Lambda function python file and the site-packages dependencies</li>
-        <li>Create AWS role to attach to the Lambda function in AWS so that we have write permissions to S3</li>
-        <li>Create AWS Lambda function using the zip file and attach the AWS role</li>
-        <li>Create an AWS Cloudwatch event to trigger the Lambda function daily</li>
-    </ul>
-
-    After running this script we have a Lambda function that is triggered daily by Cloudwatch in which json is delivered to our specicied S3 bucket.
-</p>
-
-
-<br>
-<h3 class="mb-2">Application</h3>
-<p>Now that we have data available in S3 we can use our <a href="https://flask.palletsprojects.com/en/2.2.x/">Flask</a> web application to display the data. The goal here is 
-    to just present a plot that displays follower count data for the last 7 days. I made this real simple by creating a little REST API and utilized <a href="https://redis.io/">Redis</a> to 
-    cache the data so that repeated access to the data is fast. I utilized the <a href="https://flask-restx.readthedocs.io/en/latest/">restx</a>
-    library to create this endpoint.
-
-    <script src="https://gist.github.com/bvmcode/98497e0458ef8a7e7d524da6eb725a0a.js"></script>
-
-    <br>
-    What this endpoint does is take in an artist name, fetches the last 7 days worth of data and reformats the data so that the keys are dates and the values
-    are nested json of Spotify and Twitter follower values that looks like:
-    <br>
-
-    <script src="https://gist.github.com/bvmcode/4177de25d4e760ebafe3efb5b302cb71.js"></script>
-   
-    <br>
-    And then we end up with is nicely formatted data that we can use to chart each artist's 7 day trend. Below shows both the HTML setup 
-    (dropdown menu and available plot cavas) as well as the javascript that handles the plotting. 
-    I used the <a href="https://www.chartjs.org/">chart.js</a> library here. We see here that the page loads by default with "Dream Theater" being
-     selected and plotted. Based on the drop down selection the <i>getData</i> function is 
-    called which then calls the <i>plot</i> function with artist as an argument. Data is fetched from the Flask API. The data is consumed and 
-    reformatted so that two line plots (one Twitter and one Spotify) can be overlayed.
     
-    <br>
-    <script src="https://gist.github.com/bvmcode/4ae1c759ca25256ffc5ce02b2b204b56.js"></script>
+    <p>So we are going to build a data pipeline using the following:</p>
+    <ul>
+        <li>AWS Postgres RDS - the schema for data persistence </li>
+        <li>Apache Airflow - retrieve and persist headlines, sentiment and keywords</li>
+    </ul>
+    
+    <p>You can see the project under <a href="https://github.com/bvmcode/airflow_demo_sentiment">airflow demo sentiment</a> repo on github. </p>
+    
 
-</p>
+        <br>
+        <h3 class="mb-2">Postgres Setup</h3>
+        <p>If you are following along with your own setup then this section assumes you have Terraform and Make installed. 
+            So let's first build the Postgres schema for storing our data. I wanted to build this database on AWS so I decided to use 
+            terraform to do this so that we can easily build and destroy the VPC, security group and RDS. You can see this code on the 
+            github repo <a href="https://github.com/bvmcode/airflow_demo_sentiment/tree/master/infrastructure">here</a>. Let's take a look at the <span id="proj-file">./infratructure</span> directory. 
+            Assuming you are starting this from scratch, you can remove the <span id="proj-file">.terraform.lock.hci</span> file. Then you want 
+            to create a <span id="proj-file">secrets.tfvars</span> file to set a postgres password as shown in <span id="proj-file">secrets.tfvars.template</span>. 
+            Also note that the <span id="proj-file">main.tf</span> 
+            file makes use of your default aws profile. If that is not the case you would need to update this. Once all that is done you 
+            can simple run commands <span id="proj-cmd">terraform init</span> then <span id="proj-cmd">make plan</span> and then 
+            <span id="proj-cmd">make deploy</span>. You will see the host name be printed to the screen. Then you are good to go 
+            to connect and move on.
+        </p>
 
-    <br>
-    <h3 class="mb-2">Data</h3>
+        <p>Once the database is established we can build the schema a variety of ways, using <a href="https://dbeaver.io/">dbeaver</a> for example. 
+            Below is the script to create the tables we will be using throughout the poject, which is found from the project root in 
+            <span id="proj-file">./sql/schema.sql</span>.</p>
 
-    <p>Finally the team can view their data, which will auto-update nightly and provide the last 7 day trend!</p>
-    <p>***Note - now that Twitter will be charging for access to their API, this project was brought down. Below is data for 1/1/2023-1/7/2023 read from AWS S3.</p>
+        <script src="https://gist.github.com/bvmcode/6f2d12dd6f2e366361989a05a5320445.js"></script>
 
-    <div id="app">
-        <label for="artists">Choose an artist:</label>
-        <select autocomplete="off" name="artists" id="artists" onchange="getData.call(this, event)">
-            <option value="Dream Theater">Dream Theater</option>
-            <option value="Vola">Vola</option>
-            <option value="Queensryche">Queensryche</option>
-            <option value="Katatonia">Katatonia</option>
-            <option value="Saint Asonia">Saint Asonia</option>
-            <option value="Josh Garrels">Josh Garrels</option>
-            <option value="Gunship">Gunship</option>
-            <option value="Helloween">Helloween</option>
-            <option value="Light The Torch">Light The Torch</option>
-            <option value="Rend Collective">Rend Collective</option>
-          </select>
-        <canvas id="myChart"></canvas>
-    </div>
-</div>
+        <p>Here we have the ER diagram view of our database. We see that the <span id="proj-cmd">.env.template</span> table has the headline level data like title, source and url. 
+            The <span id="proj-cmd">keyword</span> table has a 1-M relationship with the <span id="proj-cmd">articles</span> table, in which each headline can have multiple keywords. 
+            And finally the <span id="proj-cmd">sentiment_value</span> 
+            table has a 1-1 relationship with the <span id="proj-cmd">articles</span> table in which each headline has one sentiment value.
+        </p>
 
-<br>
-<br>
+        <img class="img-fluid" src="/static/images/er_diag.png" alt=""><br>
+
+        <br>
+        <h3 class="mb-2">Airflow Setup</h3>
+        <p>In this project I ran airflow locally. So I utilized docker for this. Just a brief warning, running airflow locally 
+            with all its components like celery, redis and postgres can tax your machine. Airflow has documentation on running 
+            airflow locally <a href="https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html">here</a>.</p>
+
+        <p>
+            I modified their approach a bit by using a custom Dockerfile so that I could install additional python packages 
+            that we will use. You can see the <span id="proj-file">Dockerfile</span> and the <span id="proj-file">docker-compose.yml</span> file in the <a href="https://github.com/bvmcode/airflow_demo_sentiment">project root</a>.
+            Using my approach create a <span id="proj-file">.env</span>  
+            file that mimicks the <span id="proj-file">.env.template</span> file in my repo so that we can fulfill airflow requirements for running airflow 
+            and we can also have our AWS creds in our environmental variables.
+        </p>
+        
+        <p>Then once that is done we can run <span id="proj-cmd">docker-compose up airflow-init</span> and then <span id="proj-cmd">docker-compose up</span>.</p>
+
+        <br>
+        <h3 class="mb-2">Airflow Dag</h3>
+        <p>The dag for this project is very simple.</p>
+
+        <ul>
+            <li>Get news headlines from newsapi REST API and persist them</li>
+            <li>Get headline keywords from the openai REST API and persist them</li>
+            <li>Get headline sentiments from the openai REST API and persist them</li>
+        </ul>
+
+        <p>The two tasks that call openai are independent of each other and can be run in parallel.</p>
+
+        <img class="img-fluid" src="/static/images/dag.png" alt=""><br><br>
+        
+        <p>Below we have the base version of our dag <span id="proj-file">./dags/sentiment_demo.py</span>. The job of the rest 
+        of this blog is to fill in the code for the three functions.</p>
+      
+            <script src="https://gist.github.com/bvmcode/cc4df08b233269f5824ccd76e8d3aee3.js"></script>
+        
+        <br>
+        <h3 class="mb-2">File Structure</h3>
+        <p>If we just consider the <span id="proj-file">./dags</span> directory in our repo, then our directory view looks like below. 
+            The dag is in to root of the dag directory and in the <span id="proj-file">./dags/demo</span> directory we have our
+            <span id="proj-file">models.py</span> with SQLAlchemy models and a <span id="proj-file">utils.py</span>
+             file with some helper and utility functions that we will use.</p>
+
+             <script src="https://gist.github.com/bvmcode/1f54d2b6bde6c193d534d7b7124648bf.js"></script>
+
+        <br>
+        <h3 class="mb-2">SQLAlchemy Models</h3>
+        <p>To work with our database in a pythonic way we want to create models of our tables. 
+            We can simply use an ORM, which will be SQLAlchemy. The models in python code are written out in 
+            <span id="proj-file">./demo/models.py</span>.</p>
+
+            <script src="https://gist.github.com/bvmcode/031ae25e015a0c9f736a84ba6e3e2efb.js"></script>
+
+        <p>In order to establish a connection to our database we must create an airflow connection to the 
+            database we created with our terraform process. Let's call this connection <span id="proj-cmd">sentiment_rds</span>. 
+            With the airflow UI up and running we can navigate to connections and create the connection 
+            similar to the below. An alternate way is to do it is by using the <a href="https://airflow.apache.org/docs/apache-airflow/stable/cli-and-env-variables-ref.html">airflow cli</a> 
+            inside any of the 
+            containers that are up and running for the project. For example you could use bash in the aiflow-webserver container by running 
+            <span id="proj-cmd">docker-compose exec airflow-webserver bash</span> and then create your connection with a command like 
+            <span id="proj-cmd">airflow connections add 'my_prod_db' \ --conn-uri 'conn-type://login:password@host:port/schema</span>
+        where you would need to first fill in the relevant details in the command before executing.</p>
+
+            <img class="img-fluid" src="/static/images/dag_conn.png" alt=""><br><br>
+
+        <p>Then we want to be able to create a connection to our database in code so that we can easily work with our SQLAlchemy models 
+            at runtime. 
+            To do this we use BaseHook to fetch the airflow connection and we establish the database connection 
+            through SQLAlchemy's <span id="proj-cmd">create_engine()</span> function. 
+            We can use the <span id="proj-cmd">db_conn()</span> function throughout our dag to work with our models now. 
+           We have this function available in <span id="proj-file">utils.py</span> The imports here will be used for additional 
+           functions that we introduce throughout as well.
+         </p>
+
+         <script src="https://gist.github.com/bvmcode/af73feaf70a9385f43ca4b9cdbfb507f.js"></script>
+
+        <br>
+        <h3 class="mb-2">News Headlines</h3>
+        <p>The News API is a good source to get articles across many media companies and news categories. 
+            We will strictly use it for political articles since this would likely give us the greatest range of sentiment values. </p>
+
+        <p>First Let's create a couple of airflow variables. The first will be the news sources we want to use. 
+            I have this set as a variable, as opposed to hard-coded in our dag, as we may want to add or remove media sources. 
+            As we see here we have a json list of news sources, which you can find from the newsapi documentation.</p>
+
+            <img class="img-fluid" src="/static/images/dag_var_1.png" alt=""><br><br>
+
+            <p>Next, we need to set the newsapi API key.</p>
+
+            <img class="img-fluid" src="/static/images/dag_var_2.png" alt=""><br><br>
+
+            <p>Again, you do not have to use the UI for this and instead use the airflow cli in a running container but the 
+                UI is a convenient and less error-prone way of doing it.</p>
+
+        <p>We saw earlier from our dag that we have a function defined called <span id="proj-cmd">get_articles()</span>. Let's finish the 
+            imports in the dag that we will use to finish the dag, and let's finish the code for the <span id="proj-cmd">get_articles()</span> function. 
+            We see here that we fetch our variable data. 
+            We use the newsapi to get articles using the <span id="proj-cmd">get_everything()</span> method where it queries on 
+            "politics" and the news sources listed in our airflow variable. Then we loop through our results to access 
+            the necessary data for our articles table where we use a session to persist the data in the <span id="proj-cmd">articles</span> table.
+            We see that we return the range of article IDs that were generated. This xcom will be used in the next two tasks.</p>
+
+            <script src="https://gist.github.com/bvmcode/424eafadcbd4b79ec8d86767adc97489.js"></script>
 
 
+        <br>
+        <h3 class="mb-2">OpenAI REST API</h3>
+        <p>To work with the openai REST API we need to put our API key in an airflow variable, much like we did for the newsapi key. 
+            This variable is called <span id="proj-cmd">openai_key</span>. Now let's create a function in our <span id="proj-file">utils.py</span> file that will allow us to prompt 
+            the openai text-davinci-003 model.  In this function we receive a given headline. 
+            We can expect to prompt openai for either keywords or sentiment. This will establish what kind of query we 
+            send to the model (more on this in the next two sections). The meat of this code here is getting the prompt text, 
+            authenticating with openai and using the Completion object to prompt openai for a result. The result is then returned. 
+        </p>
 
+            <script src="https://gist.github.com/bvmcode/93e35223437611a5b16113b6ce1efd60.js"></script>
 
+            <p>
+                For more on the structure of the Completion API you can read this <a href="https://www.linkedin.com/pulse/openai-completions-api-complete-guide-bo%C5%A1ko-bezik">LinkedIn blog</a> which I found to be really good 
+    at explaining the request and response details of using the API. For example, we see we are returning data in the <span id="proj-cmd">choices</span> key of the response, 
+    which is the collection of completion objects. Also note that we have <span id="proj-cmd">n=1</span> which means we only want one completion.
+   And finally, <span id="proj-cmd">max_tokens</span> is a way of controlling cost. The article also explans this.
+            </p>
+        <br>
+        <h3 class="mb-2">Headline Keywords</h3>
+        <p>Now we can finish the <span id="proj-cmd">get_keywords()</span> function our dag. 
+            But first we must know what we are prompting the openai model with. 
+          Let's create a function in our <span id="proj-file">utils.py</span> file called <span id="proj-cmd">get_keyword_prompt</span>. We already make reference to this function 
+          in <span id="proj-cmd">get_open_ai_answer()</span>. After some prompt engineering I was able to find a good bit of text that works consistently.</p>
 
-<script>
+          <script src="https://gist.github.com/bvmcode/f1b9a737839cc23011d4e40d57d3f163.js"></script>
 
-async function plot(artist){
-    let chartStatus = Chart.getChart("myChart"); // <canvas> id
-    if (chartStatus != undefined) {
-        chartStatus.destroy();
-    }
-    var url = "{{ url_for('project.artist_api', artist='ARTIST') }}".replace("ARTIST", artist)
-    const response = await fetch(url);
-    var data = await response.json();
-    var spotify = [];
-    var twitter = [];
-    var dates = [];
-    for (key in data){
-        spotify.push(data[key]["spotify"])
-        twitter.push(data[key]["twitter"])
-        dates.push(key)
-    }
-    const config = {
-        type: 'line',
-        data:{
-            labels: dates,
-            datasets: [{
-                label: 'Spotify',
-                data: spotify,
-                yAxisID: 'spotify'
-            },
-            {
-                label: 'Twitter',
-                data: twitter,
-                yAxisID: 'twitter'
-            }]
-        },
-        options: {
-            scales: {
-                spotify: {
-                    position: 'left'
-                        }, 
-                twitter: {
-                    position: 'right'
-                        }
-                }
-            }
-        };
- 
-        const myChart = new Chart("myChart", config)
+        <p>This task, as well as  the next, will need to get the headline for each article ID. So we write a function in <span id="proj-file">utils.py</span> to help with this.</p>
 
-}
+        <script src="https://gist.github.com/bvmcode/68883c42a084d2164883f2727e5bc857.js"></script>
 
-window.addEventListener("load",function(){
-    plot("Dream Theater"); 
-},false);
+        <p>In the code below we complete the <span id="proj-cmd">get_keywords()</span> function. 
+            We see that we read in the xcom from the <span id="proj-cmd">get_articles()</span> 
+            task which is the range of article ids we want to work with. We establish a connection to the database, 
+            loop through the id's in order to prompt openai for keywords for the given headline in an iteration. 
+            Since the response is a string version of a list of keywords, we  attempt to deserialize it and then loop 
+            this list and make a record for each value in the keyword table. If for some reason we get an error 
+            deserializing it then we just insert a NULL keyword value into the <span id="proj-cmd">keyword</span> table for that given headline.</p>
 
-function getData(event){
-    event.preventDefault();
-    var artist = this.options[this.selectedIndex].text
-    plot(artist);
-}
+            <script src="https://gist.github.com/bvmcode/3d91f4f79947fae51081023c6f9774a7.js"></script>
 
-</script>
+        <br>
+        <h3 class="mb-2">Headline Sentiment</h3>
+        <p>Similar to the keyword task, we need to get sentiment. The code isn't as taxing as there is no inner loop. 
+            And if we cannot convert the value to an integer then we assume something has gone wrong and simply insert 
+            a NULL sentiment value into the <span id="proj-cmd">sentiment_value</span> table for the given article id.</p>
 
+            <script src="https://gist.github.com/bvmcode/24768f4cdadbc0f7a675a569f3c4f101.js"></script>
+
+        <br>
+        <h3 class="mb-2">Data Results</h3>
+        <p>Now that we have all this data we can do some analysis. And we see that for a given article headline 
+            we can get the headline sentiment (0 to 100) and the headline keywords with the below query.</p>
+
+            <script src="https://gist.github.com/bvmcode/6d1a76e4a42ab0f1f72f0e1c0ddf7580.js"></script>
+
+        <p>Resulting in data that looks like the below where we see this headline has a positive sentiment. 
+            We can use this data to chart trends, get insights on news sources and their sentiments around 
+            keywords and other items.</p>
+            
+            <div class="table-responsive-sm">
+            <table class="table table-dark table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">title</th>
+                    <th scope="col">source</th>
+                    <th scope="col">sentiment</th>
+                    <th scope="col">keywords</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Field of presidential candidates for 2024 is already uniquely diverse</td>
+                    <td>usa-today</td>
+                    <td>98</td>
+                    <td>{presidential,candidates,2024,diverse}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+         <p>We can see that we could do a lot of analysis on media sources, sentiment around these media sources as well as drill down to certain keywords 
+            Additionally we could introduce a time element for trending analysis. Looks like a lot of analytical fun.
+         </p>
+         <br>
+         <br>
 {% endblock %}
-
