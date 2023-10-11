@@ -2,6 +2,7 @@ boto3==1.26.22
 black==22.10.0
 flake8==6.0.0
 flask==2.2.2
+Werkzeug==2.2.2
 flask_caching==2.0.1
 flask-cors==3.0.10
 flask-restx==1.0.3
