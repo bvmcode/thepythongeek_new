@@ -70,10 +70,9 @@ class Database:
   def get_data(self):
     engine = pg2.connect(f"dbname='{self.db}' user='{self.username}' host='{self.host}' port='{self.port}' password='{self.password}'")
     query = """
-            select *
+            SELECT *
             FROM public.weather
-            WHERE NOW() > api_datetime::timestamptz
-            AND NOW() - api_datetime::timestamptz <= interval '12 hours';
+            WHERE DATE_PART('Hour',now() at time zone 'UTC'-api_datetime) <= 12
             """
     df = pd.read_sql(query, con=engine)
     engine.close()
@@ -101,7 +100,7 @@ def get_plot(df, field, unit):
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
 def get_current_weather(df):
-    df = df.head(1)
+    df = df.tail(1)
     wind_dir = get_wind_direction_string(df.wind_dir.values[0])
     return {
         "Timestamp": df.api_datetime.dt.strftime('%Y-%m-%d %H:%M UTC').values[0],
