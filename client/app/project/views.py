@@ -72,7 +72,8 @@ class Database:
     query = """
             SELECT *
             FROM public.weather
-            WHERE DATE_PART('Hour',now() at time zone 'UTC'-api_datetime) <= 12
+            order by api_datetime desc
+            limit 156
             """
     df = pd.read_sql(query, con=engine)
     engine.close()
@@ -100,7 +101,7 @@ def get_plot(df, field, unit):
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
 def get_current_weather(df):
-    df = df.tail(1)
+    df = df.head(1)
     wind_dir = get_wind_direction_string(df.wind_dir.values[0])
     return {
         "Timestamp": df.api_datetime.dt.strftime('%Y-%m-%d %H:%M UTC').values[0],
