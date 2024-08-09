@@ -69,3 +69,11 @@ nav a {
     font-style: italic;
     opacity: .6;
 }
+
+
+#wx-container .content {
+    display: none;
+    padding : 10px;
+    border: solid;
+    background-color: #ffe873;
+}

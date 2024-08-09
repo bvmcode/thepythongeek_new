@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block title_h1 %}{{ title }}{% endblock %}
+{% block title_img %}{{ title_img }}{% endblock %}
+
+{% block content %}
+<script src="/static/bootstrap-5.1.3-dist/js/bootstrap.bundle.js"></script>
+<div class="container" >
+    
+    <h1 class="mb-4">My Weather Station Data</h1>
+    <p>
+        My <a target="_blank" href="https://ambientweather.com/all-weather-stations">Ambient Weather Station</a> is located in Atco, NJ. Below 
+        is current data and data for the last 12 hours. More to come as this data is collected over time.
+    </p>
+
+    <div class="container" id="wx-container">
+        <div id="wx-header">
+            <button type="button" class="btn btn-success" id="wx-header-button">Click to see the tech</button>
+        </div>
+        <div class="content" id="wx-header-content">
+            <p>I created a python package for ingesting API data for Ambient Weather Stations which is on <a target="_blank" href="https://github.com/bvmcode/ambient_wx">Github</a> 
+                and published on <a target="_blank" href="https://pypi.org/project/ambient-wx/">PyPI</a> .</p>
+        
+            <p>The AWS infrastructure I created around data collection can be seen on <a target="_blank" href="https://github.com/bvmcode/weather_station">Github</a> and has the following</p>
+            <ul>
+                <li>Docker image with scheduled data collection</li>
+                <li>Terraform script that creates</li>
+                <ul>
+                    <li>ECR repository for the image</li>
+                    <li>EC2 instance that pulls and runs image</li>
+                    <li>RDS instance for data persistance</li>
+                </ul>
+            </ul>
+            
+            <p>Also note that this station data is collected on <a target="_blank" href="https://www.wunderground.com/dashboard/pws/KNJATCO14?cm_ven=localwx_pwsdash">Weather Underground</a> as well.</p>
+        </div>
+    </div>
+
+    <br>
+    <br>
+
+    <div class="container" id="current-temperature">
+        <h2>Current Weather</h2>
+        <span>{{current_wx["Timestamp"]}}</span>
+        <div class="row">
+        {% for key in current_wx %}
+            {% if not key in ["Wind Direction", "Timestamp"] %}
+                <div class="col-sm">
+                    <h5>{{key}}</h5>
+                    {% if key=='Temperature' or key=="Dew Point" %}
+                        <p>{{ current_wx[key]["F"] }} ˚F / {{ current_wx[key]["C"] }} ˚C</p>
+                    {% elif key=='Humidity' %}
+                        <p>{{ current_wx[key] }} %</p>
+                    {% elif key=='Pressure' %}
+                        <p>{{ current_wx[key]["in"] }} in / {{ current_wx[key]["mb"] }} mb</p>
+                    {% elif key=='Wind Speed' %}
+                        <p>{{ current_wx[key]["mph"] }} mph / {{ current_wx[key]["kt"] }} kt ({{ current_wx["Wind Direction"] }})</p>
+                        {% elif key=='Hourly Rain' %}
+                        <p>{{ current_wx[key]["in"] }} in / {{ current_wx[key]["cm"] }} cm</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+      {% endfor %}
+      </div>
+    </div>
+
+    <br>
+    <br>
+
+    <div>
+        <h2>Last 12 Hours</h2>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <p>Temperature</p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="temp_units" id="c">
+                        <label class="form-check-label" for="c">
+                            ˚C
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="temp_units" id="f" checked>
+                        <label class="form-check-label" for="f">
+                            ˚F
+                        </label>
+                    </div>
+                </div>
+    
+                <div class="col-sm">
+                    <p>Wind Speed</p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="wind_units" id="mph" checked>
+                        <label class="form-check-label" for="mph">
+                            mph
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="wind_units" id="kt">
+                        <label class="form-check-label" for="kt">
+                            kt
+                        </label>
+                    </div>
+                </div>
+    
+                <div class="col-sm">
+                    <p>Barometric Pressure</p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="pressure_units" id="inHg" checked>
+                        <label class="form-check-label" for="inHg">
+                            in Hg
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="pressure_units" id="mb">
+                        <label class="form-check-label" for="mb">
+                            mb
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-sm">
+                    <p>Rain</p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="rain_units" id="in" checked>
+                        <label class="form-check-label" for="in">
+                            in
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="rain_units" id="cm">
+                        <label class="form-check-label" for="cm">
+                            cm
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    
+        <div class="container">
+
+                <div class="row">
+                    <div id='temperature-plot'></div>
+                </div>
+                <div class="row">
+                    <div id='dew-point-plot'></div>
+                </div>
+
+
+
+                <div class="row">
+                    <div id='wind-plot'></div>
+                </div>
+                <div class="row">
+                    <div id='pressure-plot'></div>
+                </div>
+                <div class="row">
+                    <div id='rain-plot'></div>
+                </div> 
+
+        </div>
+</div>
+
+
+    <script>
+        $("#wx-header").click(function () {
+            $header = $(this);
+            var $button = $("#wx-header-button")
+            var $content = $("#wx-header-content")
+            $content.slideToggle(500, function () {
+                $button.text(function () {
+                    return $content.is(":visible") ? "Click to close" : "Click to see the tech";
+                });
+            });
+        
+        });
+
+    </script>
+
+
+    <script type="text/javascript">
+
+
+        document.addEventListener('input',(e)=>{
+            if(e.target.getAttribute('name')=="temp_units") {
+                var temp_unit = event.target.id
+                var temp_plt = null
+                var dew_point_plt = null
+                if (temp_unit=='f') {
+                    temp_plt = {{temp_f_fig | safe}};
+                    dew_point_plt = {{dew_point_f_fig | safe}};
+                }
+                else {
+                    temp_plt = {{temp_c_fig | safe}};
+                    dew_point_plt = {{dew_point_c_fig | safe}};
+                }
+                Plotly.newPlot("temperature-plot", temp_plt, {});
+                Plotly.newPlot("dew-point-plot", dew_point_plt, {});
+            }
+            if(e.target.getAttribute('name')=="wind_units") {
+                var wind_unit = event.target.id
+                var wind_plt = null
+                if (wind_unit=='mph') {
+                    wind_plt = {{wind_mph_fig | safe}};
+                }
+                else {
+                    wind_plt = {{wind_kt_fig | safe}};
+                }
+                Plotly.newPlot("wind-plot", wind_plt, {});
+            }
+            if(e.target.getAttribute('name')=="pressure_units") {
+                var pres_unit = event.target.id
+                var pres_plt = null
+                if (pres_unit=='inHg') {
+                    pres_plt = {{pressure_in_fig | safe}};
+                }
+                else {
+                    pres_plt = {{pressure_mb_fig | safe}};
+                }
+                Plotly.newPlot("pressure-plot", pres_plt, {});
+            }
+            if(e.target.getAttribute('name')=="rain_units") {
+                var rain_unit = event.target.id
+                var rain_plt = null
+                if (rain_unit=='int') {
+                    rain_plt = {{hourly_rain_in_fig | safe}};
+                }
+                else {
+                    rain_plt = {{hourly_rain_cm_fig | safe}};
+                }
+                Plotly.newPlot("rain-plot", rain_plt, {});
+            }
+        })
+
+            var temp_f = {{temp_f_fig | safe}};
+            var wind_mph = {{wind_mph_fig | safe}};
+            var pres_in = {{pressure_in_fig | safe}};
+            var dew_point_f = {{dew_point_f_fig | safe}};
+            var hourly_rain_in = {{hourly_rain_in_fig | safe}};
+            Plotly.newPlot("temperature-plot", temp_f, {});
+            Plotly.newPlot("wind-plot", wind_mph, {});
+            Plotly.newPlot("pressure-plot", pres_in, {});
+            Plotly.newPlot("dew-point-plot", dew_point_f, {});
+            Plotly.newPlot("rain-plot", hourly_rain_in, {});
+    
+    </script>
+{% endblock %}
