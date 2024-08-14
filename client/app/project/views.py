@@ -76,6 +76,7 @@ class Database:
             limit 156
             """
     df = pd.read_sql(query, con=engine)
+    df["api_datetime"] = df["api_datetime"].dt.tz_localize('UTC').dt.tz_convert('US/Eastern')
     engine.close()
     return df
 
@@ -104,7 +105,7 @@ def get_current_weather(df):
     df = df.head(1)
     wind_dir = get_wind_direction_string(df.wind_dir.values[0])
     return {
-        "Timestamp": df.api_datetime.dt.strftime('%Y-%m-%d %H:%M UTC').values[0],
+        "Timestamp": df.api_datetime.dt.strftime('%Y-%m-%d %I:%M %p EST').values[0],
         "Temperature": {"F": math.ceil(df.temp_f.values[0]), "C": math.ceil(df.temp_c.values[0])},
         "Dew Point": {"F": math.ceil(df.dew_point_f.values[0]), "C": math.ceil(df.dew_point_c.values[0])},
         "Humidity": math.ceil(df.humidity.values[0]),
