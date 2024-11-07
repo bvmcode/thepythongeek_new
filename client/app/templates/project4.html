@@ -6,11 +6,114 @@
 {% block title_img %}{{ title_img }}{% endblock %}
 
 {% block content %}
-<div class="container" >
-<p>{{ prediction }} </p>
-<p>{{ prediction_prev_day }} </p>
-<p>{{ actual_prev_day }} </p>
+<div class="container">
+<div class="row">
+    <div class="col">
+        <h4>About this model</h4>
+        <p>I created an xgboost model to predict the daily high temperature (°F) for my weather station location in Atco, NJ.
+            More on what goes into this model can be found below the trend chart.
+        </p>
+    </div>
+    <div class="col">
+        <h4>Previous Day Prediction</h4>
+        <p>Prediction: 
+            {% if prediction_prev_day%} 
+            {{ prediction_prev_day }} °F
+            {% else %}
+            no prediction due to lack of data
+            {% endif %}
+        </p>
+        <p>Actual: 
+            {% if prediction_prev_day%} 
+                {% if actual_prev_day %}
+                    {{ actual_prev_day }} °F
+                {% else %}
+                    --
+                {% endif %}
+            {% else %}
+            no actual due to lack of data
+            {% endif %}
+        </p>
+    </div>
+    <div class="col">
+        <h4>Today's Prediction</h4>
+        <p>Prediction: 
+            {% if prediction%} 
+            {{ prediction }} °F
+            {% else %}
+            no prediction due to lack of data
+            {% endif %}
+        </p>
+        <p>Current Temperature: 
+            {{ current_temperature }} °F
+        </p>
+    </div>
 </div>
 
+<br>
+<br>
+
+<div class="container">
+    <h3>Ten Day Trend</h3>
+    <canvas id="myChart"></canvas>
+</div>
+
+<br>
+<br>
+
+<div class="container">
+    <h3>Model Development</h3>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+    async function plot(){
+        var url = "{{ url_for('project.prediction_api') }}"
+        const response = await fetch(url);
+        var data = await response.json();
+        console.log(data)
+        const config = {
+            type: 'line',
+            data:{
+                labels: data['dates'],
+                datasets: [{
+                    label: 'Predictions',
+                    data: data['predictions'],
+                    yAxisID: 'predictions'
+                },
+                {
+                    label: 'Actuals',
+                    data: data['actuals'],
+                    yAxisID: 'actuals'
+                }      
+                ]
+            },
+            options: 
+            {  
+                responsive: true,
+                scales: {
+                    predictions: {
+                        position: 'left'
+                            }, 
+                    actuals: {
+                        position: 'right'
+                            }
+                    }
+             }
+            };
+            console.log(config)
+            const myChart = new Chart("myChart", config)
+    
+    }
+    
+    window.addEventListener("load",function(){
+        plot();
+    },false);
+    
+    
+    </script>
 
 {% endblock %}

@@ -147,10 +147,6 @@ def project3():
         hourly_rain_cm_fig=hourly_rain_cm_fig
     )
 
-import pytz
-
-
-from botocore.exceptions import ClientError
 
 def get_value(date, value_type):
     if value_type == 'prediction':
@@ -165,19 +161,63 @@ def get_value(date, value_type):
     return round(float(obj['Body'].read().decode('utf-8')),1)
 
 
+def date_range():
+    utc_date = datetime.utcnow().replace(tzinfo=pytz.utc)
+    dt_now = utc_date.astimezone(pytz.timezone('US/Eastern')).date()
+    dt_10 = dt_now + timedelta(days=-11)
+    dates = [dt_10]
+    while True:
+        if dt_10 >= dt_now:
+            break
+        else:
+            dt_10 = dt_10 + timedelta(days=1)
+            dates.append(dt_10)
+    return dates
+
+
+@api.route("/api/predictions")
+class PredictionApi(Resource):
+    @cache.cached(timeout=1000, query_string=True)
+    def get(self):
+        dates = date_range()
+        predictions = []
+        actuals = []
+        dates_updated = []
+        for date in dates:
+            pred = get_value(date, 'prediction')
+            actual = get_value(date, 'actual')
+            if pred is not None and actual is not None:
+                dates_updated.append(date.strftime("%Y-%m-%d"))
+                predictions.append(pred)
+                actuals.append(actual)
+        data = {
+            "dates": dates_updated,
+            "predictions": predictions,
+            "actuals": actuals
+        }
+        return data
+
+
 @project_bp.route("/predict")
 def project4():
     utc_date = datetime.utcnow().replace(tzinfo=pytz.utc)
-    dt = utc_date.astimezone(pytz.timezone('US/Eastern')).date()
+    dt_time = utc_date.astimezone(pytz.timezone('US/Eastern'))
+    dt = dt_time.date()
     dt_prev = dt + timedelta(days=-1)
-
     prediction = get_value(dt, 'prediction')
     prediction_prev_day = get_value(dt_prev, 'prediction')
-    actual_prev_day = get_value(dt_prev, 'actual')
-
+    db = Database()
+    df = db.get_data()
+    current_wx = get_current_weather(df)
+    current_temp = current_wx['Temperature']['F']
+    if prediction is None:
+        actual_prev_day = None
+    else:
+        actual_prev_day = get_value(dt_prev, 'actual')
     return render_template(
-        "project4.html", title="\\\\Weather Station\\\\", title_img="weather.jpg",
+        "project4.html", title="\\\\Daily High Temperature Prediction\\\\", title_img="weather.jpg",
         prediction=prediction,
         prediction_prev_day=prediction_prev_day,
-        actual_prev_day=actual_prev_day
+        actual_prev_day=actual_prev_day,
+        current_temperature=current_temp
     )

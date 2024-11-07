@@ -23,7 +23,7 @@ services:
       env_file:
           - .env
       ports:
-        - "8080:5000"
+        - "8081:5000"
       depends_on:
         - redis
 
