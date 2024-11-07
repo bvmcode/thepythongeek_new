@@ -1,0 +1,16 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block title_h1 %}{{ title }}{% endblock %}
+{% block title_img %}{{ title_img }}{% endblock %}
+
+{% block content %}
+<div class="container" >
+<p>{{ prediction }} </p>
+<p>{{ prediction_prev_day }} </p>
+<p>{{ actual_prev_day }} </p>
+</div>
+
+
+{% endblock %}
