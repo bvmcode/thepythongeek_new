@@ -164,14 +164,14 @@ def get_value(date, value_type):
 def date_range():
     utc_date = datetime.utcnow().replace(tzinfo=pytz.utc)
     dt_now = utc_date.astimezone(pytz.timezone('US/Eastern')).date()
-    dt_10 = dt_now + timedelta(days=-11)
-    dates = [dt_10]
+    dt_14 = dt_now + timedelta(days=-15)
+    dates = [dt_14]
     while True:
-        if dt_10 >= dt_now:
+        if dt_14 >= dt_now:
             break
         else:
-            dt_10 = dt_10 + timedelta(days=1)
-            dates.append(dt_10)
+            dt_14 = dt_14 + timedelta(days=1)
+            dates.append(dt_14)
     return dates
 
 
@@ -205,19 +205,22 @@ def project4():
     dt = dt_time.date()
     dt_prev = dt + timedelta(days=-1)
     prediction = get_value(dt, 'prediction')
-    prediction_prev_day = get_value(dt_prev, 'prediction')
+    prediction_prev_day = get_value(dt_prev, 'actual')
     db = Database()
     df = db.get_data()
     current_wx = get_current_weather(df)
     current_temp = current_wx['Temperature']['F']
     if prediction is None:
         actual_prev_day = None
+        last_updated = datetime(dt_prev.year, dt_prev.month, dt_prev.day, 9, 45, 0).strftime('%Y-%m-%d %I:%M %p EST')
     else:
         actual_prev_day = get_value(dt_prev, 'actual')
+        last_updated = datetime(dt_time.year, dt_time.month, dt_time.day, 9, 45, 0).strftime('%Y-%m-%d %I:%M %p EST')
     return render_template(
         "project4.html", title="\\\\Daily High Temperature Prediction\\\\", title_img="weather.jpg",
         prediction=prediction,
         prediction_prev_day=prediction_prev_day,
         actual_prev_day=actual_prev_day,
-        current_temperature=current_temp
+        current_temperature=current_temp,
+        last_updated=last_updated
     )
