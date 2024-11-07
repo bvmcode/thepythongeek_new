@@ -8,22 +8,22 @@
 {% block content %}
 <div class="container">
 <div class="row">
-    <div class="col">
-        <h4>About this model</h4>
+    <div class="col border-end text-center align-items-center">
+        <h4 style="text-decoration: underline">About this model</h4>
         <p>I created an xgboost model to predict the daily high temperature (°F) for my weather station location in Atco, NJ.
-            More on what goes into this model can be found below the trend chart.
+            Visit this blog to see how I created the model.
         </p>
     </div>
-    <div class="col">
-        <h4>Previous Day Prediction</h4>
-        <p>Prediction: 
+    <div class="col border-end text-center align-items-center">
+        <h4 style="text-decoration: underline">Previous Day Prediction</h4>
+        <p>PREDICTION: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             {% if prediction_prev_day%} 
             {{ prediction_prev_day }} °F
             {% else %}
             no prediction due to lack of data
             {% endif %}
         </p>
-        <p>Actual: 
+        <p >ACTUAL: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             {% if prediction_prev_day%} 
                 {% if actual_prev_day %}
                     {{ actual_prev_day }} °F
@@ -35,16 +35,16 @@
             {% endif %}
         </p>
     </div>
-    <div class="col">
-        <h4>Today's Prediction</h4>
-        <p>Prediction: 
+    <div class="col text-center align-items-center">
+        <h4 style="text-decoration: underline">Today's Prediction</h4>
+        <p>PREDICTION: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             {% if prediction%} 
             {{ prediction }} °F
             {% else %}
             no prediction due to lack of data
             {% endif %}
         </p>
-        <p>Current Temperature: 
+        <p>CURRENT: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             {{ current_temperature }} °F
         </p>
     </div>
@@ -61,9 +61,6 @@
 <br>
 <br>
 
-<div class="container">
-    <h3>Model Development</h3>
-</div>
 
 </div>
 
@@ -98,9 +95,6 @@
                     predictions: {
                         position: 'left'
                             }, 
-                    actuals: {
-                        position: 'right'
-                            }
                     }
              }
             };
