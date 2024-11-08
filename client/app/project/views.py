@@ -210,6 +210,7 @@ def project4():
     df = db.get_data()
     current_wx = get_current_weather(df)
     current_temp = current_wx['Temperature']['F']
+
     message_prev_day = None
     last_updated = datetime(dt.year, dt.month, dt.day, 9, 0, 0).strftime('%Y-%m-%d %I:%M %p EST')
     if prediction_prev_day is None:
@@ -223,6 +224,7 @@ def project4():
         message = "Prediction not available yet, check back after 9 AM EST."
         if (dt_time.hour == 9 and dt_time.minute>=15) or (dt_time.hour>9):
             message = "Prediction not available due to lack of data."
+    
     return render_template(
         "project4.html", title="\\\\Daily High Temperature Prediction\\\\", title_img="weather.jpg",
         prediction=prediction,

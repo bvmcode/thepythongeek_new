@@ -26,7 +26,7 @@
         {% endif %}
         <p>PREDICTION: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             {% if prediction_prev_day %} 
-            {{ prediction_prev_day }} °F
+                {{ prediction_prev_day }} °F
             {% else %}
             --
             {% endif %}
@@ -77,6 +77,7 @@
 
 </div>
 
+
 <script>
 
     async function plot(){
@@ -91,27 +92,16 @@
                 datasets: [{
                     label: 'Predictions',
                     data: data['predictions'],
-                    yAxisID: 'predictions'
                 },
                 {
                     label: 'Actuals',
                     data: data['actuals'],
-                    yAxisID: 'actuals'
                 }      
                 ]
             },
-            options: 
-            {  
-                responsive: true,
-                scales: {
-                    predictions: {
-                        position: 'left'
-                            }, 
-                    actuals: {
-                        position: 'right'
-                            }
-                    }
-             }
+            options: {
+                responsive: true
+            }
             };
             console.log(config)
             const myChart = new Chart("myChart", config)
