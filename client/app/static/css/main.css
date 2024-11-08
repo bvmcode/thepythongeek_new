@@ -77,9 +77,3 @@ nav a {
     border: solid;
     background-color: #ffe873;
 }
-
-.navbar-nav .nav-item:not(:last-child) .nav-link {
-    border-right: 1px solid #ffe873; /* Adjust color as desired */
-    padding-right: 10px; /* Adds spacing to the right of the separator */
-    margin-right: 10px; /* Adds spacing between the separator and the next item */
-}
