@@ -212,10 +212,10 @@ def project4():
     current_temp = current_wx['Temperature']['F']
     if prediction is None:
         actual_prev_day = None
-        last_updated = datetime(dt_prev.year, dt_prev.month, dt_prev.day, 9, 45, 0).strftime('%Y-%m-%d %I:%M %p EST')
+        last_updated = datetime(dt_prev.year, dt_prev.month, dt_prev.day, 9, 0, 0).strftime('%Y-%m-%d %I:%M %p EST')
     else:
         actual_prev_day = get_value(dt_prev, 'actual')
-        last_updated = datetime(dt_time.year, dt_time.month, dt_time.day, 9, 45, 0).strftime('%Y-%m-%d %I:%M %p EST')
+        last_updated = datetime(dt_time.year, dt_time.month, dt_time.day, 9, 0, 0).strftime('%Y-%m-%d %I:%M %p EST')
     return render_template(
         "project4.html", title="\\\\Daily High Temperature Prediction\\\\", title_img="weather.jpg",
         prediction=prediction,
