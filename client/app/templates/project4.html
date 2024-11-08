@@ -18,11 +18,11 @@
         <p>Blog coming soon explaining the data pipeline and model development.</p>
     </div>
     <div class="col-sm border-end text-center align-items-center">
-        <h4 style="text-decoration: underline">Previous Day Prediction</h4>
+        <h4 style="text-decoration: underline">Previous Day <small>{{ prev_day }}</small></h4>
         {% if message_prev_day %}
             <p style="color:red;">{{ message_prev_day }}</p>
         {% else %}
-            <p><small class="text-muted">last updated {{ last_updated }}</small></p>
+            <p><small class="text-muted">updated {{ last_updated_prev_day }}</small></p>
         {% endif %}
         <p>PREDICTION: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             {% if prediction_prev_day is not none %} 
@@ -55,11 +55,11 @@
         </p>
     </div>
     <div class="col-sm text-center align-items-center">
-        <h4 style="text-decoration: underline">Today's Prediction</h4>
+        <h4 style="text-decoration: underline">Today <small>{{ today }}</small></h4>
         {% if message %}
             <p style="color:red;">{{ message }}</p>
         {% else %}
-            <p><small class="text-muted">last updated {{ last_updated }}</small></p>
+            <p><small class="text-muted">updated {{ last_updated }}</small></p>
         {% endif %}
         <p>PREDICTION: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             {% if prediction is not none %} 

@@ -228,7 +228,7 @@ def project4():
 
     message_prev_day = None
     difference = None
-    last_updated = datetime(dt.year, dt.month, dt.day, 9, 0, 0).strftime('%Y-%m-%d %I:%M %p EST')
+    last_updated_prev_day = datetime(dt.year, dt.month, dt.day, 0, 0, 0).strftime('%Y-%m-%d %I:%M %p EST')
     if prediction_prev_day is None:
         actual_prev_day = None
         message_prev_day = "Prediction not available due to lack of data"
@@ -238,6 +238,7 @@ def project4():
             difference = abs(prediction_prev_day - actual_prev_day)
 
     message = None
+    last_updated = datetime(dt.year, dt.month, dt.day, 9, 0, 0).strftime('%Y-%m-%d %I:%M %p EST')
     if prediction is None:
         message = "Prediction not available yet, check back after 9 AM EST"
         if (dt_time.hour == 9 and dt_time.minute>=15) or (dt_time.hour>9):
@@ -251,7 +252,10 @@ def project4():
         difference=difference,
         current_temperature=current_temp,
         last_updated=last_updated,
+        last_updated_prev_day=last_updated_prev_day,
         message_prev_day=message_prev_day,
         current_temp_max=current_temp_max,
-        message=message
+        message=message,
+        today = dt.strftime("%m/%d/%Y"),
+        prev_day = dt_prev.strftime("%m/%d/%Y"),
     )
