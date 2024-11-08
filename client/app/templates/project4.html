@@ -11,7 +11,7 @@
     <div class="col-sm border-end text-center align-items-center">
         <h4 style="text-decoration: underline">About this model</h4>
         <p>I developed a machine learning model to predict the daily high temperature (°F) for my location in Atco, NJ. The actual 
-            temperature data is from my <a href="{{ url_for('project.project3') }}">weather station</a>. Other model features come from 
+            temperature data is from my <a href="{{ url_for('project.project3') }}">weather station</a>. The model features come from 
             surrounding NWS 12Z soundings as well as 12Z observations from my station.
             <br>
         </p>
@@ -19,34 +19,42 @@
     </div>
     <div class="col-sm border-end text-center align-items-center">
         <h4 style="text-decoration: underline">Previous Day Prediction</h4>
-        <p><small class="text-muted">last updated {{ last_updated }}</small></p>
+        {% if message_prev_day %}
+            <p style="color:red;">{{ message_prev_day }}</p>
+        {% else %}
+            <p><small class="text-muted">last updated {{ last_updated }}</small></p>
+        {% endif %}
         <p>PREDICTION: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            {% if prediction_prev_day%} 
+            {% if prediction_prev_day %} 
             {{ prediction_prev_day }} °F
             {% else %}
-            no prediction due to lack of data
+            --
             {% endif %}
         </p>
         <p >ACTUAL: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            {% if prediction_prev_day%} 
+            {% if prediction_prev_day %} 
                 {% if actual_prev_day %}
                     {{ actual_prev_day }} °F
                 {% else %}
                     --
                 {% endif %}
             {% else %}
-            no actual due to lack of data
+            --
             {% endif %}
         </p>
     </div>
     <div class="col-sm text-center align-items-center">
         <h4 style="text-decoration: underline">Today's Prediction</h4>
-        <p><small class="text-muted">last updated {{ last_updated }}</small></p>
+        {% if message %}
+            <p style="color:red;">{{ message }}</p>
+        {% else %}
+            <p><small class="text-muted">last updated {{ last_updated }}</small></p>
+        {% endif %}
         <p>PREDICTION: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             {% if prediction%} 
             {{ prediction }} °F
             {% else %}
-            no prediction due to lack of data
+            --
             {% endif %}
         </p>
         <p>CURRENT: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
