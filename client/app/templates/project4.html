@@ -25,16 +25,27 @@
             <p><small class="text-muted">last updated {{ last_updated }}</small></p>
         {% endif %}
         <p>PREDICTION: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            {% if prediction_prev_day %} 
+            {% if prediction_prev_day is not none %} 
                 {{ prediction_prev_day }} °F
             {% else %}
             --
             {% endif %}
         </p>
         <p >ACTUAL: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            {% if prediction_prev_day %} 
+            {% if prediction_prev_day is not none %} 
                 {% if actual_prev_day %}
                     {{ actual_prev_day }} °F
+                {% else %}
+                    --
+                {% endif %}
+            {% else %}
+            --
+            {% endif %}
+        </p>
+        <p >DIFFERENCE: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            {% if difference is not none %} 
+                {% if actual_prev_day and prediction_prev_day %}
+                    {{ difference }} °F
                 {% else %}
                     --
                 {% endif %}
@@ -51,13 +62,16 @@
             <p><small class="text-muted">last updated {{ last_updated }}</small></p>
         {% endif %}
         <p>PREDICTION: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            {% if prediction%} 
+            {% if prediction is not none %} 
             {{ prediction }} °F
             {% else %}
             --
             {% endif %}
         </p>
-        <p>CURRENT: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <p>HIGH TEMP TODAY: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            {{ current_temp_max }} °F
+        </p>
+        <p>CURRENT TEMP: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             {{ current_temperature }} °F
         </p>
     </div>

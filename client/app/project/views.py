@@ -80,6 +80,20 @@ class Database:
     df["api_datetime"] = df["api_datetime"].dt.tz_localize('UTC').dt.tz_convert('US/Eastern')
     engine.close()
     return df
+  
+  def get_current_max_temp(self, date):
+    engine = pg2.connect(f"dbname='{self.db}' user='{self.username}' host='{self.host}' port='{self.port}' password='{self.password}'")
+    query = f"""
+            SELECT api_datetime, temp_f
+            FROM public.weather
+            order by api_datetime desc
+            limit 500
+            """
+    df = pd.read_sql(query, con=engine)
+    df["date"] = df["api_datetime"].dt.tz_localize('UTC').dt.tz_convert('US/Eastern')
+    engine.close()
+    df = df[df['date'].dt.date == date]
+    return df.temp_f.max()
 
 
 def get_wind_direction_string(degrees):
@@ -210,28 +224,34 @@ def project4():
     df = db.get_data()
     current_wx = get_current_weather(df)
     current_temp = current_wx['Temperature']['F']
+    current_temp_max = db.get_current_max_temp(dt)
 
     message_prev_day = None
+    difference = None
     last_updated = datetime(dt.year, dt.month, dt.day, 9, 0, 0).strftime('%Y-%m-%d %I:%M %p EST')
     if prediction_prev_day is None:
         actual_prev_day = None
-        message_prev_day = "Prediction not available due to lack of data."
+        message_prev_day = "Prediction not available due to lack of data"
     else:
         actual_prev_day = get_value(dt_prev, 'actual')
+        if actual_prev_day is not None:
+            difference = abs(prediction_prev_day - actual_prev_day)
 
     message = None
     if prediction is None:
-        message = "Prediction not available yet, check back after 9 AM EST."
+        message = "Prediction not available yet, check back after 9 AM EST"
         if (dt_time.hour == 9 and dt_time.minute>=15) or (dt_time.hour>9):
-            message = "Prediction not available due to lack of data."
+            message = "Prediction not available due to lack of data"
     
     return render_template(
         "project4.html", title="\\\\Daily High Temperature Prediction\\\\", title_img="weather.jpg",
         prediction=prediction,
         prediction_prev_day=prediction_prev_day,
         actual_prev_day=actual_prev_day,
+        difference=difference,
         current_temperature=current_temp,
         last_updated=last_updated,
         message_prev_day=message_prev_day,
+        current_temp_max=current_temp_max,
         message=message
     )
