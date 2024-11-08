@@ -25,30 +25,22 @@
             <p><small class="text-muted">updated {{ last_updated_prev_day }}</small></p>
         {% endif %}
         <p>PREDICTION: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            {% if prediction_prev_day is not none %} 
+            {% if (prediction_prev_day is not none) and (actual_prev_day is not none) %} 
                 {{ prediction_prev_day }} °F
             {% else %}
             --
             {% endif %}
         </p>
         <p >ACTUAL: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            {% if prediction_prev_day is not none %} 
-                {% if actual_prev_day %}
+            {% if (prediction_prev_day is not none) and (actual_prev_day is not none) %} 
                     {{ actual_prev_day }} °F
-                {% else %}
-                    --
-                {% endif %}
             {% else %}
             --
             {% endif %}
         </p>
         <p >DIFFERENCE: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            {% if difference is not none %} 
-                {% if actual_prev_day and prediction_prev_day %}
+            {% if (prediction_prev_day is not none) and (actual_prev_day is not none) %} 
                     {{ difference }} °F
-                {% else %}
-                    --
-                {% endif %}
             {% else %}
             --
             {% endif %}

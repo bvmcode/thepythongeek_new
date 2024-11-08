@@ -94,6 +94,18 @@ class Database:
     engine.close()
     df = df[df['date'].dt.date == date]
     return df.temp_f.max()
+  
+  def get_latest_temp(self):
+    engine = pg2.connect(f"dbname='{self.db}' user='{self.username}' host='{self.host}' port='{self.port}' password='{self.password}'")
+    query = """
+            SELECT temp_f
+            FROM public.weather
+            order by api_datetime desc
+            limit 1
+            """
+    df = pd.read_sql(query, con=engine)
+    engine.close()
+    return df.temp_f.values[0]
 
 
 def get_wind_direction_string(degrees):
@@ -220,29 +232,28 @@ def project4():
     dt_prev = dt + timedelta(days=-1)
     prediction = get_value(dt, 'prediction')
     prediction_prev_day = get_value(dt_prev, 'prediction')
+    actual_prev_day = get_value(dt_prev, 'actual')
     db = Database()
-    df = db.get_data()
-    current_wx = get_current_weather(df)
-    current_temp = current_wx['Temperature']['F']
+    current_temp = db.get_latest_temp()
     current_temp_max = db.get_current_max_temp(dt)
 
     message_prev_day = None
     difference = None
     last_updated_prev_day = datetime(dt.year, dt.month, dt.day, 0, 0, 0).strftime('%Y-%m-%d %I:%M %p EST')
-    if prediction_prev_day is None:
-        actual_prev_day = None
-        message_prev_day = "Prediction not available due to lack of data"
+    if prediction_prev_day is None or actual_prev_day is None:
+        message_prev_day = "Yesterday's data is not available till after 9 AM EST."
+        if (dt_time.hour == 9 and dt_time.minute>=15) or (dt_time.hour>9):
+            message = "Yesterday's data is not available due to missing data."
     else:
-        actual_prev_day = get_value(dt_prev, 'actual')
-        if actual_prev_day is not None:
-            difference = abs(prediction_prev_day - actual_prev_day)
+        difference = abs(prediction_prev_day - actual_prev_day)
+   
 
     message = None
     last_updated = datetime(dt.year, dt.month, dt.day, 9, 0, 0).strftime('%Y-%m-%d %I:%M %p EST')
     if prediction is None:
-        message = "Prediction not available yet, check back after 9 AM EST"
+        message = "Today's prediction is not available till after 9 AM EST."
         if (dt_time.hour == 9 and dt_time.minute>=15) or (dt_time.hour>9):
-            message = "Prediction not available due to lack of data"
+            message = "Today's prediction is not available due to missing data."
     
     return render_template(
         "project4.html", title="\\\\Daily High Temperature Prediction\\\\", title_img="weather.jpg",
