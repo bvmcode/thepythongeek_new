@@ -164,14 +164,14 @@ def get_value(date, value_type):
 def date_range():
     utc_date = datetime.utcnow().replace(tzinfo=pytz.utc)
     dt_now = utc_date.astimezone(pytz.timezone('US/Eastern')).date()
-    dt_14 = dt_now + timedelta(days=-15)
-    dates = [dt_14]
+    dt_12 = dt_now + timedelta(days=-13)
+    dates = [dt_12]
     while True:
-        if dt_14 >= dt_now:
+        if dt_12 >= dt_now:
             break
         else:
-            dt_14 = dt_14 + timedelta(days=1)
-            dates.append(dt_14)
+            dt_12 = dt_12 + timedelta(days=1)
+            dates.append(dt_12)
     return dates
 
 
