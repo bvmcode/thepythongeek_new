@@ -190,14 +190,14 @@ def get_value(date, value_type):
 def date_range():
     utc_date = datetime.utcnow().replace(tzinfo=pytz.utc)
     dt_now = utc_date.astimezone(pytz.timezone('US/Eastern')).date()
-    dt_7 = dt_now + timedelta(days=-8)
-    dates = [dt_7]
+    dt_14 = dt_now + timedelta(days=-15)
+    dates = [dt_14]
     while True:
-        if dt_7 >= dt_now:
+        if dt_14 >= dt_now:
             break
         else:
-            dt_7 = dt_7 + timedelta(days=1)
-            dates.append(dt_7)
+            dt_14 = dt_14 + timedelta(days=1)
+            dates.append(dt_14)
     return dates
 
 
@@ -254,7 +254,6 @@ def project4():
         message = "Today's prediction is not available till after 9 AM EST."
         if (dt_time.hour == 9 and dt_time.minute>=15) or (dt_time.hour>9):
             message = "Today's prediction is not available due to missing data."
-    
     return render_template(
         "project4.html", title="\\\\Daily High Temperature Prediction\\\\", title_img="weather.jpg",
         prediction=prediction,
@@ -268,5 +267,5 @@ def project4():
         current_temp_max=current_temp_max,
         message=message,
         today = dt.strftime("%m/%d/%Y"),
-        prev_day = dt_prev.strftime("%m/%d/%Y"),
+        prev_day = dt_prev.strftime("%m/%d/%Y")
     )
