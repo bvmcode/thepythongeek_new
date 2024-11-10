@@ -10,9 +10,11 @@
 <div class="row">
     <div class="col-sm border-end text-center align-items-center">
         <h4 style="text-decoration: underline">About this model</h4>
-        <p>I developed a machine learning model to predict the daily high temperature (°F) for my location in Atco, NJ. The actual 
-            temperature data is from my <a href="{{ url_for('project.project3') }}">weather station</a>. The model features come from 
-            surrounding NWS 12Z soundings as well as 12Z observations from my station.
+        <p>I developed a machine learning model to predict the daily high temperature (°F) for my location in Atco, NJ. This page 
+            displays the comparison between the model's prediction to the observed high temperature 
+            from my <a href="{{ url_for('project.project3') }}">weather station</a>. 
+            The model input is derived from surrounding NWS 12Z sounding data as well as 12Z observations 
+            from my station.
             <br>
         </p>
         <p>Blog coming soon explaining the data pipeline and model development.</p>
