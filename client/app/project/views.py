@@ -243,7 +243,7 @@ def project4():
     if prediction_prev_day is None or actual_prev_day is None:
         message_prev_day = "Yesterday's data is not available till after 9 AM EST."
         if (dt_time.hour == 9 and dt_time.minute>=15) or (dt_time.hour>9):
-            message = "Yesterday's data is not available due to missing data."
+            message_prev_day = "Yesterday's data is not available due to missing data."
     else:
         difference = round(abs(prediction_prev_day - actual_prev_day),1)
    
