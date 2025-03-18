@@ -7,7 +7,7 @@ import pytz
 import boto3
 from app import cache
 from botocore.exceptions import ClientError
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, make_response, jsonify
 from flask_restx import Api, Resource
 import psycopg2 as pg2
 import pandas as pd
@@ -272,22 +272,36 @@ def project4():
     )
 
 
-def get_latest_run():
+def get_latest_run(bucket):
     s3 = s3fs.S3FileSystem()
-    path = "bvm-wx-models/gfs_images"
+    path = f"{bucket}/gfs_images"
     latest_date = max([int(f.split("/")[2]) for f in s3.ls(path)])
     latest_run = max([int(f.split("/")[3]) for f in s3.ls(f"{path}/{latest_date}")])
     return latest_date, str(latest_run).zfill(2)
 
 
+@project_bp.route("/api/models_latest_run")
+def models_latest_run():
+    bucket = os.getenv("MODELS_BUCKET")
+    latest_date, latest_run = get_latest_run(bucket)
+
+    response = make_response(jsonify({
+        "latest_date": latest_date,
+        "latest_run": latest_run
+    }))
+    print(latest_date, latest_run, flush=True)
+    # Prevent browser caching
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    
+    return response
+
+
 @project_bp.route("/wx-models")
 def project5():
-    latest_date, latest_run = get_latest_run()
-    hours = [f"{i:03d}" for i in range(0, 121, 6)]
     bucket = os.getenv("MODELS_BUCKET")
+    hours = [f"{i:03d}" for i in range(0, 121, 6)]
     return render_template(
         "project5.html", title="\\\\GFS Weather Models\\\\", title_img="gfs.png",
-        bucket=bucket, latest_date=latest_date, latest_run=latest_run, hours=hours
-    )
-
-
+        bucket=bucket, hours=hours)

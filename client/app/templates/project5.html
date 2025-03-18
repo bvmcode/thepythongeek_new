@@ -75,9 +75,9 @@
             "500mb-Vort": "500mb--height_vorticity"
         }
 
+  latest_date = null
+  latest_run = null
   async function updateImage(hour, class_name) {
-        latest_date = '{{ latest_date }}'
-        latest_run = '{{ latest_run }}'
         bucket = '{{ bucket }}'
         level = class_name.split('--')[0]
         plot_type = class_name.split('--')[1]
@@ -95,7 +95,20 @@
         });
     }
 
-    window.onload = function() {
+    async function fetchLatestRun() {
+    try {
+        const response = await fetch("api/models_latest_run", { cache: "no-store" });
+        latestRunData = await response.json()
+        latest_date = latestRunData.latest_date
+        latest_run = latestRunData.latest_run
+    } catch (error) {
+        console.error("Error fetching latest run:", error);
+    }
+}
+
+    window.onload = async function() {
+        await fetchLatestRun()
+        console.log(latest_date, latest_run)
         button = document.querySelectorAll("#wx-buttons button")[0];
         class_name = button.className.split(" ")[0]
         hour = button.innerText
