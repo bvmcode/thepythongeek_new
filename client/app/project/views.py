@@ -13,6 +13,7 @@ import psycopg2 as pg2
 import pandas as pd
 import plotly
 import plotly.express as px
+import s3fs
 
 project_bp = Blueprint("project", __name__, url_prefix="/project")
 api = Api(project_bp)
@@ -255,7 +256,7 @@ def project4():
         if (dt_time.hour == 9 and dt_time.minute>=15) or (dt_time.hour>9):
             message = "Today's prediction is not available due to missing data."
     return render_template(
-        "project4.html", title="\\\\Daily High Temperature Prediction\\\\", title_img="weather.jpg",
+        "project4.html", title="\\\\Max Temperature AI Prediction\\\\", title_img="weather.jpg",
         prediction=prediction,
         prediction_prev_day=prediction_prev_day,
         actual_prev_day=actual_prev_day,
@@ -269,3 +270,24 @@ def project4():
         today = dt.strftime("%m/%d/%Y"),
         prev_day = dt_prev.strftime("%m/%d/%Y")
     )
+
+
+def get_latest_run():
+    s3 = s3fs.S3FileSystem()
+    path = "bvm-wx-models/gfs_images"
+    latest_date = max([int(f.split("/")[2]) for f in s3.ls(path)])
+    latest_run = max([int(f.split("/")[3]) for f in s3.ls(f"{path}/{latest_date}")])
+    return latest_date, str(latest_run).zfill(2)
+
+
+@project_bp.route("/wx-models")
+def project5():
+    latest_date, latest_run = get_latest_run()
+    hours = [f"{i:03d}" for i in range(0, 121, 6)]
+    bucket = os.getenv("MODELS_BUCKET")
+    return render_template(
+        "project5.html", title="\\\\GFS Weather Models\\\\", title_img="gfs.png",
+        bucket=bucket, latest_date=latest_date, latest_run=latest_run, hours=hours
+    )
+
+

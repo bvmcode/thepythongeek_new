@@ -1,0 +1,152 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block title_h1 %}{{ title }}{% endblock %}
+{% block title_img %}{{ title_img }}{% endblock %}
+
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="/static/bootstrap-5.1.3-dist/js/bootstrap.js"></script>
+
+
+<style>
+ #weatherImage {
+    width: 80%;
+    height: auto;
+ }
+  .btn {
+  margin: 2px !important;
+}
+
+</style>
+
+
+<div class="container-fluid">
+    <h2>GFS Model Output Portfolio Project</h2>
+    <p>I designed and implemented a cloud-based (AWS) workflow for generating GFS model images using Apache Airflow to orchestrate ECS tasks.
+        The image generation code, written in Python, is packaged in an ECR container and deployed via AWS Fargate.
+        I leveraged Terraform to automate infrastructure provisioning, including building and pushing the container image, 
+        configuring the Fargate cluster, defining the task and service, and deploying an Airflow instance on EC2. 
+        This solution enhances automation, scalability, and operational efficiency in weather model visualization.</p>
+
+    <p>You can view the repository <a href="https://github.com/bvmcode/weather_models">here</a>.</p>
+    <p>The images are updated four times a day.</p>
+
+    <div id="wx-buttons-cat" class="container-fluid">
+        <button type="button" class="btn btn-secondary" onclick="updateButtons(this)">Surface</button>
+        <button type="button" class="btn btn-primary" onclick="updateButtons(this)">850mb</button>
+        <button type="button" class="btn btn-primary" onclick="updateButtons(this)">850mb-DP</button>
+        <button type="button" class="btn btn-primary" onclick="updateButtons(this)">850mb-RH</button>
+        <button type="button" class="btn btn-primary" onclick="updateButtons(this)">700mb</button>
+        <button type="button" class="btn btn-primary" onclick="updateButtons(this)">500mb</button>
+        <button type="button" class="btn btn-primary" onclick="updateButtons(this)">500mb-Vort</button>
+        <button type="button" class="btn btn-primary" onclick="updateButtons(this)">300mb</button>
+        <button type="button" class="btn btn-primary" onclick="updateButtons(this)">200mb</button>
+    </div>
+    <br>
+    <div id="wx-buttons" class="container-fluid">
+        {% for hr in hours %} 
+            <button type="button" class="sfc--mslp_thickness_precip btn btn-sm btn-success" onclick="updateImageButton(this)">{{ hr }}</button> 
+        {% endfor %}
+    </div>
+
+    <div class="container-fluid">
+        <p><small>click to enlarge - if on mobile you can flip device to see image better</small></p>
+        <img id="weatherImage" class="img-fluid border border-4" src="" onclick="toggleSize()"
+           onerror="this.src='{{ url_for('static', filename='images/img_not_exist.png') }}'; return false;">
+    </div>
+
+</div>
+
+<br>
+<br>
+<br>
+<script>
+    button_name_to_s3_folder = {
+            "Surface":"sfc--mslp_thickness_precip",
+            "850mb":"850mb--height_wind",
+            "700mb":"700mb--height_wind",
+            "500mb":"500mb--height_wind",
+            "300mb":"300mb--height_wind",
+            "200mb":"200mb--height_wind",
+            "850mb-DP": "850mb--dewpoint",
+            "850mb-RH": "850mb--rh_wind",
+            "500mb-Vort": "500mb--height_vorticity"
+        }
+
+  async function updateImage(hour, class_name) {
+        latest_date = '{{ latest_date }}'
+        latest_run = '{{ latest_run }}'
+        bucket = '{{ bucket }}'
+        level = class_name.split('--')[0]
+        plot_type = class_name.split('--')[1]
+        url = `https://${bucket}.s3.amazonaws.com/gfs_images/${latest_date}/${latest_run}/${level}/${plot_type}/${hour}_hour.png`
+        console.log(url)
+        document.getElementById("weatherImage").src = url; 
+        buttons = document.querySelectorAll("#wx-buttons button")
+        buttons.forEach(button => {
+           button_hr = button.innerText
+           if (button_hr != hour){
+              button.className = class_name + " btn btn-sm btn-success"
+           } else {
+              button.className = class_name + " btn btn-sm btn-secondary"
+           }
+        });
+    }
+
+    window.onload = function() {
+        button = document.querySelectorAll("#wx-buttons button")[0];
+        class_name = button.className.split(" ")[0]
+        hour = button.innerText
+        updateImage(hour, class_name) 
+    };
+
+
+    function updateImageButton(element) {
+        hour = element.innerText
+        class_name = element.className.split(" ")[0]
+        updateImage(hour, class_name)
+    }
+
+
+    function updateButtons(element){
+        plot_type = element.innerText
+        class_name = button_name_to_s3_folder[plot_type]
+        updateImage("000", class_name)
+        buttons = document.querySelectorAll("#wx-buttons-cat button")
+        buttons.forEach(button => {
+           if (button.innerText != element.innerText){
+              button.className = class_name + " btn btn-primary"
+           } else {
+              button.className = class_name + " btn btn-secondary"
+           }
+        });
+    }
+       
+      img_enlarged=false
+      function toggleSize(){
+        img = document.getElementById("weatherImage");
+          if (!img_enlarged){
+             enlargeImg(img)
+             img_enlarged=true
+          }else{
+            resetImg(img)
+            img_enlarged=false
+          }
+      }
+    
+        function enlargeImg(img) {
+            img.style.width = "105%";
+            img.style.height = "auto";
+            img.style.transition = "width 0.5s ease";
+        }
+      
+        // Function to reset image dimensions
+        function resetImg(img) {
+            img.style.width = "80%";
+            img.style.height = "auto";
+            img.style.transition = "width 0.5s ease";
+        }
+  </script>
+{% endblock %}
