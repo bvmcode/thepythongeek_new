@@ -3,6 +3,7 @@ import math
 import os
 from datetime import datetime, timedelta
 import pytz
+import time
 
 import boto3
 from app import cache
@@ -285,9 +286,12 @@ def models_latest_run():
     bucket = os.getenv("MODELS_BUCKET")
     latest_date, latest_run = get_latest_run(bucket)
 
+    timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+
     response = make_response(jsonify({
         "latest_date": latest_date,
-        "latest_run": latest_run
+        "latest_run": latest_run,
+        "timestamp": timestamp
     }))
     print(latest_date, latest_run, flush=True)
     # Prevent browser caching
