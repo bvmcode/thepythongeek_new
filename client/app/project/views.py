@@ -275,6 +275,7 @@ def project4():
 def get_latest_run():
     s3 = s3fs.S3FileSystem()
     path = "bvm-wx-models/gfs_images"
+    print(s3.ls(path), flush=True)
     latest_date = max([int(f.split("/")[2]) for f in s3.ls(path)])
     latest_run = max([int(f.split("/")[3]) for f in s3.ls(f"{path}/{latest_date}")])
     return latest_date, str(latest_run).zfill(2)
