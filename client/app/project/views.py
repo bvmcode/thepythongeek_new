@@ -257,7 +257,8 @@ def project4():
         if (dt_time.hour == 9 and dt_time.minute>=15) or (dt_time.hour>9):
             message = "Today's prediction is not available due to missing data."
     return render_template(
-        "project4.html", title="\\\\Max Temperature AI Prediction\\\\", title_img="weather.jpg",
+        "project4.html", title="\\\\Max Temperature AI Prediction\\\\",
+        title_img="weather.png",
         prediction=prediction,
         prediction_prev_day=prediction_prev_day,
         actual_prev_day=actual_prev_day,
