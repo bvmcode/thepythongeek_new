@@ -14,6 +14,8 @@ def create_app():
     app = Flask(__name__, static_url_path="/static")
     app_settings = os.getenv("APP_SETTINGS")
     app.config.from_object(app_settings)
+    app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+    app.config["TEMPLATES_AUTO_RELOAD"] = True
     CORS(app)
     # cache.init_app(app)
 
