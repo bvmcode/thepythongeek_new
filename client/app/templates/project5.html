@@ -24,13 +24,14 @@
 
 <div class="container-fluid">
     <h2>GFS Model Output Portfolio Project</h2>
-    <p>I designed and implemented a cloud-based (AWS) workflow for generating GFS model images using Apache Airflow to orchestrate ECS tasks.
+    <p>I designed and implemented a cloud-based (AWS) workflow for generating custom weather model images from NOAA's GFS raw data using Apache Airflow to orchestrate ECS tasks.
         The image generation code, written in Python, is packaged in an ECR container and deployed via AWS Fargate.
         I leveraged Terraform to automate infrastructure provisioning, including building and pushing the container image, 
         configuring the Fargate cluster, defining the task and service, and deploying an Airflow instance on EC2. 
         This solution enhances automation, scalability, and operational efficiency in weather model visualization.</p>
 
-    <p>You can view the repository <a href="https://github.com/bvmcode/weather_models">here</a>.</p>
+    <p>You can view my code repository <a href="https://github.com/bvmcode/weather_models">here</a>. You can learn more about 
+    NOAA GFS Model data <a href="https://www.ncei.noaa.gov/products/weather-climate-models/global-forecast">here</a></p>
     <p>The images are updated four times a day.</p>
 
     <div id="wx-buttons-cat" class="container-fluid">
