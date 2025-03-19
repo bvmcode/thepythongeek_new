@@ -296,9 +296,10 @@ def models_latest_run():
     }))
     print(latest_date, latest_run, flush=True)
     # Prevent browser caching
-    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0, s-maxage=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
+    response.headers["CF-Cache-Status"] = "DYNAMIC"
     
     return response
 
