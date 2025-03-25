@@ -277,8 +277,8 @@ def project4():
 def get_latest_run(bucket):
     s3 = s3fs.S3FileSystem()
     path = f"{bucket}/gfs_images"
-    latest_date = max([int(f.split("/")[2]) for f in s3.ls(path)])
-    latest_run = max([int(f.split("/")[3]) for f in s3.ls(f"{path}/{latest_date}")])
+    latest_date = max([int(f.split("/")[2]) for f in s3.ls(path, refresh=True)])
+    latest_run = max([int(f.split("/")[3]) for f in s3.ls(f"{path}/{latest_date}", refresh=True)])
     return latest_date, str(latest_run).zfill(2)
 
 
