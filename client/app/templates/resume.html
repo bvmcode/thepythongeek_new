@@ -6,124 +6,138 @@
 
 {% block content %}
 <div class="container mb-5">
-     <a href="{{ url_for('static', filename='barry_martin_resume.pdf') }}" class="btn btn-primary" role="button" target="_blank">PDF Version</a>
-     <br>
-     <br>
-      <div class="resume-section card">
-        <h5 class="resume-section-header card-header">Experience</h5>
-         <div class="card-body">
-            <div class="row align-items-start">
-                <div class="col-sm">
-                <h5 class="resume-company card-title">Lead Data Engineer (MLOps) at <a href="https://www.zelis.com/">Zelis</a></h5>
-                <h6 class="resume-dates mt-3 mb-3"><i>August 2021 - Present</i></h6>
-                <ul>
-                    <li>Lead MLOps and data engineering initiatives to operationalize AI/ML solutions using
-                        Snowflake, AWS, and Airflow.</li>
-                    <li>Designed and deployed end-to-end ML pipelines leveraging AWS SageMaker, Docker,
-                        and Airflow.</li>
-                    <li>Developed model monitoring dashboards using Streamlit and integrated metrics
-                        collection workflows.</li>
-                    <li>Automated AWS infrastructure with Terraform, enabling scalable and reproducible
-                        deployments.</li>
-                    <li>Built and containerized inference workflows, managing deployments via ECR, ECS, and
-                        Lambda.</li>
-                    <li>Collaborated with data scientists to productionize ML models and deploy scalable,
-                        maintainable systems.</li>
-                    <li>Designed data pipelines integrating Snowflake and orchestrated with Apache Airflow.</li>
-                    <li>Developed Spark pipelines to support large-scale data processing.</li>
-                </ul>
-                </div>
-                <div class="col-sm">
-                    <h5 class="resume-company card-title">Sr. Data Analyst at <a href="https://chrobinson.com/">CH Robinson</a></h5>
-                    <h6 class="resume-dates mt-3 mb-3"><i>January 2014 - August 2021</i></h6>
-                    <ul>
-                        <li>Conducted exploratory data analysis in Jupyter to derive actionable insights.</li>
-                        <li>Built interactive dashboards with Plotly, Streamlit, Power BI, and R Shiny.</li>
-                        <li>Optimized SQL queries across SQL Server, Postgres, and Hive databases.</li>
-                        <li>Developed Python-based ETL and reporting solutions.</li>
-                        <li>Ensured data integrity through integration of disparate data sources.</li>
-                        <li>Worked cross-functionally to translate business needs into data-driven outcomes.</li>
-                    </ul>
-                </div>
-            </div>
+  <a href="{{ url_for('static', filename='barry_martin_resume.pdf') }}" 
+     class="btn btn-primary" role="button" target="_blank">PDF Version</a>
+  <br><br>
+
+  <!-- Experience -->
+  <div class="resume-section card">
+    <h5 class="resume-section-header card-header">Experience</h5>
+    <div class="card-body">
+      <div class="row align-items-start">
+
+        <div class="col-sm">
+          <h5 class="resume-company card-title">
+            Lead Data Engineer (MLOps) at <a href="https://www.zelis.com/">Zelis</a>
+          </h5>
+          <h6 class="resume-dates mt-3 mb-3"><i>August 2021 - Present</i></h6>
+          <ul>
+            <li>Lead MLOps and data engineering initiatives to operationalize AI/ML solutions using Snowflake, AWS, and Airflow.</li>
+            <li>Designed and deployed end-to-end ML pipelines leveraging AWS SageMaker, Docker, and Airflow.</li>
+            <li>Developed model monitoring dashboards using Streamlit and integrated metrics collection workflows.</li>
+            <li>Automated AWS infrastructure with Terraform, enabling scalable and reproducible deployments.</li>
+            <li>Built and containerized inference workflows, managing deployments via ECR, ECS, and Lambda.</li>
+            <li>Collaborated with data scientists to productionize ML models and deploy scalable, maintainable systems.</li>
+            <li>Designed data pipelines integrating Snowflake and orchestrated with Apache Airflow.</li>
+            <li>Developed Spark pipelines to support large-scale data processing.</li>
+          </ul>
         </div>
- 
 
+        <div class="col-sm">
+          <h5 class="resume-company card-title">
+            Sr. Data Analyst at <a href="https://chrobinson.com/">CH Robinson</a>
+          </h5>
+          <h6 class="resume-dates mt-3 mb-3"><i>January 2014 - August 2021</i></h6>
+          <ul>
+            <li>Conducted exploratory data analysis in Jupyter to derive actionable insights.</li>
+            <li>Built interactive dashboards with Plotly, Streamlit, Power BI, and R Shiny.</li>
+            <li>Optimized SQL queries across SQL Server, Postgres, and Hive databases.</li>
+            <li>Developed Python-based ETL and reporting solutions.</li>
+            <li>Ensured data integrity through integration of disparate data sources.</li>
+            <li>Worked cross-functionally to translate business needs into data-driven outcomes.</li>
+          </ul>
+        </div>
 
-        <div class="resume-section card">
-          <h5 class="resume-section-header card-header">Skills</h5>
-           <div class="card-body">
-              <div class="row align-items-start">
-                  <div class="col-sm">
-                  <ul class="text-center" style="list-style-type: none;">
-                      <li style="font-size:150%;">Programming</li>
-                      <li>Python</li>
-                      <li>SQL</li>
-                      <li>Docker</li>
-                      <li>Bash Scripting</li>
-                      <li>Github Actions</li>
-                      <li>Terraform</li>
-                  </ul>
-                  </div>
-                  <div class="col-sm">
-                      <ul class="text-center" style="list-style-type: none;">
-                        <li style="font-size:150%;">Data Engineering</li>
-                        <li>Snowflake</li>
-                        <li>Airflow</li>
-                        <li>Spark</li>
-                        <li>Postgres</li>
-                        <li>SQL Server</li>
-                        <li>Database Design</li>
-                      </ul>
-                  </div>
-                  <div class="col-sm">
-                    <ul class="text-center" style="list-style-type: none;">
-                        <li style="font-size:150%;">AWS Services</li>
-                        <li>SageMaker</li>
-                        <li>ECR/ECS</li>
-                        <li>Lambda</li>
-                        <li>RDS</li>
-                        <li>Glue</li>
-                        <li>EMR</li>
-                    </ul>
-                </div>
-                <div class="col-sm">
-                    <ul class="text-center" style="list-style-type: none;">
-                        <li style="font-size:150%;">Analytics & Monitoring</li>
-                        <li>Streamlit</li>
-                        <li>Jupyter</li>
-                        <li>Plotly</li>
-                        <li>Model Monitoring</li>
-                        <li>Inference Workflow Design</li>
-                    </ul>
-                </div>
-              </div>
-          </div>
+      </div> <!-- .row -->
+    </div> <!-- .card-body -->
+  </div> <!-- Experience card -->
 
+  <!-- Skills -->
+  <div class="resume-section card">
+    <h5 class="resume-section-header card-header">Skills</h5>
+    <div class="card-body">
+      <div class="row align-items-start">
 
+        <div class="col-sm">
+          <ul class="text-center" style="list-style-type: none;">
+            <li style="font-size:150%;">Programming</li>
+            <li>Python</li>
+            <li>SQL</li>
+            <li>Docker</li>
+            <li>Bash Scripting</li>
+            <li>Github Actions</li>
+            <li>Terraform</li>
+          </ul>
+        </div>
 
-        <div class="resume-section card">
-          <h5 class="resume-section-header card-header">Education</h5>
-           <div class="card-body">
-              <div class="row align-items-start">
-                  <div class="col">
-                  <h5 class="resume-company card-title"><a href="https://umassl.edu/">University of Massachusetts Lowell</a></h5>
-                  <h6 class="resume-dates mt-3 mb-3"><i>Information Technology - B.S.</i></h6>
-                  <ul>
-                      <li>Programming and relational databases focused coursework</li>
-                  </ul>
-                  </div>
-                  <div class="col">
-                      <h5 class="resume-company card-title"><a href="https://ou.edu/">University of Oklahoma</a></h5>
-                      <h6 class="resume-dates mt-3 mb-3"><i>Atmopheric Science - B.S.</i></h6>
-                      <ul>
-                          <li>Research student at NSSL and also earned a minor in Mathematics</li>
-                      </ul>
-                  </div>
-              </div>
-          </div>
+        <div class="col-sm">
+          <ul class="text-center" style="list-style-type: none;">
+            <li style="font-size:150%;">Data Engineering</li>
+            <li>Snowflake</li>
+            <li>Airflow</li>
+            <li>Spark</li>
+            <li>Postgres</li>
+            <li>SQL Server</li>
+            <li>Database Design</li>
+          </ul>
+        </div>
 
+        <div class="col-sm">
+          <ul class="text-center" style="list-style-type: none;">
+            <li style="font-size:150%;">AWS Services</li>
+            <li>SageMaker</li>
+            <li>ECR/ECS</li>
+            <li>Lambda</li>
+            <li>RDS</li>
+            <li>Glue</li>
+            <li>EMR</li>
+          </ul>
+        </div>
 
-</div>
+        <div class="col-sm">
+          <ul class="text-center" style="list-style-type: none;">
+            <li style="font-size:150%;">Analytics & Monitoring</li>
+            <li>Streamlit</li>
+            <li>Jupyter</li>
+            <li>Plotly</li>
+            <li>Model Monitoring</li>
+            <li>Inference Workflow Design</li>
+          </ul>
+        </div>
 
+      </div> <!-- .row -->
+    </div> <!-- .card-body -->
+  </div> <!-- Skills card -->
+
+  <!-- Education -->
+  <div class="resume-section card">
+    <h5 class="resume-section-header card-header">Education</h5>
+    <div class="card-body">
+      <div class="row align-items-start">
+
+        <div class="col">
+          <h5 class="resume-company card-title">
+            <a href="https://umassl.edu/">University of Massachusetts Lowell</a>
+          </h5>
+          <h6 class="resume-dates mt-3 mb-3"><i>Information Technology - B.S.</i></h6>
+          <ul>
+            <li>Programming and relational databases focused coursework</li>
+          </ul>
+        </div>
+
+        <div class="col">
+          <h5 class="resume-company card-title">
+            <a href="https://ou.edu/">University of Oklahoma</a>
+          </h5>
+          <h6 class="resume-dates mt-3 mb-3"><i>Atmospheric Science - B.S.</i></h6>
+          <ul>
+            <li>Research student at NSSL and also earned a minor in Mathematics</li>
+          </ul>
+        </div>
+
+      </div> <!-- .row -->
+    </div> <!-- .card-body -->
+  </div> <!-- Education card -->
+
+</div> <!-- .container -->
 {% endblock %}
